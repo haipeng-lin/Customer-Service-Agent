@@ -357,6 +357,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!--  模型模块  -->
+            <dependency>
+                <groupId>com.csagent</groupId>
+                <artifactId>csagent-model</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

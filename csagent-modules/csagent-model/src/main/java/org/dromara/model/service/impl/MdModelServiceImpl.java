@@ -1,4 +1,4 @@
-package com.csagent.model.service.impl;
+package org.dromara.model.service.impl;
 
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;

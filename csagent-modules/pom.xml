@@ -15,6 +15,7 @@
         <module>csagent-job</module>
         <module>csagent-system</module>
         <module>csagent-workflow</module>
+        <module>csagent-model</module>
     </modules>
 
     <artifactId>csagent-modules</artifactId>

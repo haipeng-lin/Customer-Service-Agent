@@ -1,6 +1,6 @@
 package org.dromara.model.domain.bo;
 
-import com.csagent.model.domain.MdModel;
+import org.dromara.model.domain.MdModel;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
@@ -8,6 +8,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
+import org.dromara.model.domain.MdModel;
 
 /**
  * 模型业务对象 md_model

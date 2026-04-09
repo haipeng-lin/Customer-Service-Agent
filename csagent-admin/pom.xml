@@ -93,6 +93,12 @@
             <artifactId>csagent-workflow</artifactId>
         </dependency>
 
+        <!--  demo模块  -->
+        <dependency>
+            <groupId>com.csagent</groupId>
+            <artifactId>csagent-model</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
