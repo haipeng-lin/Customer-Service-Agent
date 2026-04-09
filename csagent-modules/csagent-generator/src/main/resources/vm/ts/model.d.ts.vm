@@ -1,0 +1,59 @@
+import type { BaseEntity, PageQuery } from '#/api/common';
+
+export interface ${BusinessName}VO {
+    #foreach ($column in $columns)
+    /**
+     * ${column.columnComment}
+     */
+        #if($column.javaField == 'id')
+            ${column.javaField}: number | string;
+        #elseif($column.javaType == 'String')
+                ${column.javaField}: string;
+        #elseif($column.javaType == 'Long' || $column.javaType == 'Integer')
+                ${column.javaField}: number;
+        #else
+                ${column.javaField}: ${column.tsType};
+        #end
+
+    #end
+}
+
+export interface ${BusinessName}Form extends BaseEntity {
+    #foreach ($column in $columns)
+    /**
+     * ${column.columnComment}
+     */
+        #if($column.javaField == 'id')
+            ${column.javaField}?: number | string;
+        #elseif($column.javaType == 'String')
+                ${column.javaField}?: string;
+        #elseif($column.javaType == 'Long' || $column.javaType == 'Integer')
+                ${column.javaField}?: number;
+        #else
+                ${column.javaField}?: ${column.tsType};
+        #end
+
+    #end
+}
+
+export interface ${BusinessName}Query extends PageQuery {
+    #foreach ($column in $columns)
+        #if($column.isQuery == '1')
+        /**
+         * ${column.columnComment}
+         */
+            #if($column.javaType == 'String')
+                ${column.javaField}?: string;
+            #elseif($column.javaType == 'Long' || $column.javaType == 'Integer')
+                    ${column.javaField}?: number;
+            #else
+                    ${column.javaField}?: ${column.tsType};
+            #end
+
+        #end
+    #end
+    /**
+     * 日期范围参数
+     */
+    params?: any;
+}

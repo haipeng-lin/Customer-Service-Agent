@@ -1,0 +1,62 @@
+import type { ${BusinessName}Form, ${BusinessName}Query, ${BusinessName}VO } from './model';
+import type { ID, IDS, PageResult } from '#/api/common';
+
+import { commonExport } from '#/api/helper';
+import { alovaInstance } from '#/utils/http';
+
+/**
+ * 查询${functionName}列表
+ * @param params
+ * @returns ${functionName}列表
+ */
+export function ${businessName}List(params?: ${BusinessName}Query) {
+    return alovaInstance.get<PageResult<${BusinessName}VO>>(
+        '/${moduleName}/${businessName}/list',
+        { params },
+    );
+}
+
+/**
+ * 导出${functionName}列表
+ * @param params
+ * @returns void
+ */
+export function ${businessName}Export(params?: ${BusinessName}Query) {
+    return commonExport('/${moduleName}/${businessName}/export', params ?? {});
+}
+
+/**
+ * 查询${functionName}详情
+ * @param id 主键ID
+ * @returns ${functionName}详情
+ */
+export function ${businessName}Info(id: ID) {
+    return alovaInstance.get<${BusinessName}VO>(`/${moduleName}/${businessName}/${id}`);
+}
+
+/**
+ * 新增${functionName}
+ * @param data
+ * @returns void
+ */
+export function ${businessName}Add(data: ${BusinessName}Form) {
+    return alovaInstance.postWithMsg<void>('/${moduleName}/${businessName}', data);
+}
+
+/**
+ * 更新${functionName}
+ * @param data
+ * @returns void
+ */
+export function ${businessName}Update(data: ${BusinessName}Form) {
+    return alovaInstance.putWithMsg<void>('/${moduleName}/${businessName}', data);
+}
+
+/**
+ * 删除${functionName}
+ * @param id 主键ID或ID数组
+ * @returns void
+ */
+export function ${businessName}Remove(id: ID | IDS) {
+    return alovaInstance.deleteWithMsg<void>(`/${moduleName}/${businessName}/\${id}`);
+}

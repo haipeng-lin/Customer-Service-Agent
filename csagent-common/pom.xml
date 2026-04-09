@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>Customer-Service-Agent</artifactId>
+        <groupId>com.csagent</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>csagent-common-bom</module>
+        <module>csagent-common-social</module>
+        <module>csagent-common-core</module>
+        <module>csagent-common-doc</module>
+        <module>csagent-common-excel</module>
+        <module>csagent-common-idempotent</module>
+        <module>csagent-common-job</module>
+        <module>csagent-common-log</module>
+        <module>csagent-common-mail</module>
+        <module>csagent-common-mybatis</module>
+        <module>csagent-common-oss</module>
+        <module>csagent-common-ratelimiter</module>
+        <module>csagent-common-redis</module>
+        <module>csagent-common-satoken</module>
+        <module>csagent-common-security</module>
+        <module>csagent-common-sms</module>
+        <module>csagent-common-web</module>
+        <module>csagent-common-translation</module>
+        <module>csagent-common-sensitive</module>
+        <module>csagent-common-json</module>
+        <module>csagent-common-encrypt</module>
+        <module>csagent-common-tenant</module>
+        <module>csagent-common-websocket</module>
+        <module>csagent-common-sse</module>
+    </modules>
+
+    <artifactId>csagent-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        common 通用模块
+    </description>
+
+</project>
