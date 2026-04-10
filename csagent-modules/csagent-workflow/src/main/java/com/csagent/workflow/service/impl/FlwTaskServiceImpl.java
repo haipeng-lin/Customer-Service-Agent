@@ -50,7 +50,7 @@ import com.csagent.workflow.common.enums.TaskAssigneeType;
 import com.csagent.workflow.common.enums.TaskOperationEnum;
 import com.csagent.workflow.common.enums.TaskStatusEnum;
 import com.csagent.workflow.domain.FlowInstanceBizExt;
-import org.dromara.workflow.domain.bo.*;
+import com.csagent.workflow.domain.bo.*;
 import com.csagent.workflow.domain.vo.FlowCopyVo;
 import com.csagent.workflow.domain.vo.FlowHisTaskVo;
 import com.csagent.workflow.domain.vo.FlowTaskVo;
