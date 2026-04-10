@@ -109,7 +109,7 @@ public class MdModelController extends BaseController {
      * 状态修改
      */
     @SaCheckPermission("model:model:edit")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Log(title = "模型", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
     public R<Void> changeStatus(@RequestBody MdModelBo model) {

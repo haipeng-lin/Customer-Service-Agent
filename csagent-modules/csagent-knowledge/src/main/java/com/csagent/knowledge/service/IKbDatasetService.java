@@ -65,4 +65,13 @@ public interface IKbDatasetService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 修改状态
+     *
+     * @param id     主键
+     * @param status 状态
+     * @return 是否修改成功
+     */
+    int updateStatus(Long id, String status);
 }

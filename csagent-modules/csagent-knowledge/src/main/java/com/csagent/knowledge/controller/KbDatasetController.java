@@ -102,4 +102,15 @@ public class KbDatasetController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(kbDatasetService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 状态修改
+     */
+    @SaCheckPermission("knowledge:dataset:edit")
+    @Log(title = "知识库", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/changeStatus")
+    public R<Void> changeStatus(@RequestBody KbDatasetBo model) {
+        return toAjax(kbDatasetService.updateStatus(model.getId(), model.getStatus()));
+    }
 }

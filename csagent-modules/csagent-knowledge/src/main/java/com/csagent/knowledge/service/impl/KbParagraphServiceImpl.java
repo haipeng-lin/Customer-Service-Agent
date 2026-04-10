@@ -6,6 +6,7 @@ import com.csagent.common.mybatis.core.page.TableDataInfo;
 import com.csagent.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,5 +134,13 @@ public class KbParagraphServiceImpl implements IKbParagraphService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    @Override
+    public int updateStatus(Long id, String status) {
+        return baseMapper.update(null,
+            new LambdaUpdateWrapper<KbParagraph>()
+                .set(KbParagraph::getStatus, status)
+                .eq(KbParagraph::getId, id));
     }
 }

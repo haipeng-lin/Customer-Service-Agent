@@ -102,4 +102,15 @@ public class KbDocumentController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(kbDocumentService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 状态修改
+     */
+    @SaCheckPermission("knowledge:document:edit")
+    @Log(title = "文档", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/changeStatus")
+    public R<Void> changeStatus(@RequestBody KbDocumentBo model) {
+        return toAjax(kbDocumentService.updateStatus(model.getId(), model.getStatus()));
+    }
 }

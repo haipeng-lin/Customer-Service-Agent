@@ -102,4 +102,15 @@ public class KbParagraphController extends BaseController {
                           @PathVariable Long[] ids) {
         return toAjax(kbParagraphService.deleteWithValidByIds(List.of(ids), true));
     }
+
+    /**
+     * 状态修改
+     */
+    @SaCheckPermission("knowledge:paragraph:edit")
+    @Log(title = "段落", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/changeStatus")
+    public R<Void> changeStatus(@RequestBody KbParagraphBo model) {
+        return toAjax(kbParagraphService.updateStatus(model.getId(), model.getStatus()));
+    }
 }
