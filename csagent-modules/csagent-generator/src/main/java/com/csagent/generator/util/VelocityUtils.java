@@ -184,9 +184,9 @@ public class VelocityUtils {
             fileName = StringUtils.format("{}/views/{}/{}/index.vue", vuePath, moduleName, businessName);
         }
         else if (template.contains("api.ts.vm")) {
-            fileName = StringUtils.format("{}/api/{}/{}/index.ts", vuePath, moduleName, businessName);
+            fileName = StringUtils.format("{}/views/{}/{}/api/index.ts", vuePath, moduleName, businessName);
         } else if (template.contains("model.d.ts.vm")) {
-            fileName = StringUtils.format("{}/api/{}/{}/model.d.ts", vuePath, moduleName, businessName);
+            fileName = StringUtils.format("{}/views/{}/{}/api/model.d.ts", vuePath, moduleName, businessName);
         } else if (template.contains("index.vue.vm")) {
             fileName = StringUtils.format("{}/views/{}/{}/index.vue", vuePath, moduleName, businessName);
         } else if (template.contains("data.ts.vm")) {

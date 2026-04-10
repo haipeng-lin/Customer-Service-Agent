@@ -364,6 +364,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!--  知识库模块  -->
+            <dependency>
+                <groupId>com.csagent</groupId>
+                <artifactId>csagent-knowledge</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

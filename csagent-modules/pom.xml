@@ -16,6 +16,7 @@
         <module>csagent-system</module>
         <module>csagent-workflow</module>
         <module>csagent-model</module>
+        <module>csagent-knowledge</module>
     </modules>
 
     <artifactId>csagent-modules</artifactId>

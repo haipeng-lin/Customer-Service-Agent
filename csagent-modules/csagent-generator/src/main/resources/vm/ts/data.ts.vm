@@ -1,20 +1,32 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import { h } from 'vue';
+import { DictEnum } from '@vben/constants';
+import { getPopupContainer } from '@vben/utils';
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
 
 /**
  * 搜索表单配置
  */
 export const querySchema = (): VbenFormSchema[] => [
     #foreach($column in $columns)
-        #if($column.isQuery == '1')
+        #if($column.query)
+            #set($dictType=$column.dictType)
             {
-                component: '#if($column.htmlType == "select" || $column.dictType != "")Select#else Input#end',
                 fieldName: '${column.javaField}',
                 label: '${column.columnComment}',
                 #if($column.dictType != "")
+                    component: 'Select',
                     componentProps: {
-                        options: [], // 建议通过全局指令或接口自动获取字典: ${column.dictType}
+                        getPopupContainer,
+                        options: getDictOptions(DictEnum.${dictType.toUpperCase()}),
+                        allowClear: true,
                     },
+                #elseif($column.htmlType == "datetime")
+                    component: 'DatePicker',
+                #else
+                    component: 'Input',
                 #end
             },
         #end
@@ -27,18 +39,21 @@ export const querySchema = (): VbenFormSchema[] => [
 export const columns: VxeGridProps['columns'] = [
     { type: 'checkbox', width: 50 },
     #foreach($column in $columns)
-        #if($column.isList == '1')
-            #if($column.isPk == '1')
+        #if($column.list)
+            #if($column.pk)
                 { field: '${column.javaField}', title: '${column.columnComment}', width: 100 },
-            #else
+            #elseif($column.dictType != "")
                 {
                     field: '${column.javaField}',
-                    title: '${column.columnComment}'#if($column.dictType != ""),
-                    cellRender: {
-                        name: 'dict',
-                        props: { dictType: '${column.dictType}' }
-                    }#end
+                    title: '${column.columnComment}',
+                    slots: {
+                        default: ({ row }) => {
+                            return renderDict(row.${column.javaField}, DictEnum.${column.dictType.toUpperCase()});
+                        },
+                    },
                 },
+            #else
+                { field: '${column.javaField}', title: '${column.columnComment}' },
             #end
         #end
     #end
@@ -56,7 +71,7 @@ export const columns: VxeGridProps['columns'] = [
  */
 export const modalSchema = (): VbenFormSchema[] => [
     #foreach($column in $columns)
-        #if($column.isPk == '1')
+        #if($column.pk)
             {
                 fieldName: '${column.javaField}',
                 label: '${column.columnComment}',
@@ -66,18 +81,30 @@ export const modalSchema = (): VbenFormSchema[] => [
                     triggerFields: [''],
                 },
             },
-        #elseif(($column.isInsert == '1' || $column.isEdit == '1') && !$column.isSuperColumn($column.javaField))
+        #elseif(($column.insert || $column.edit) && !$column.superColumn)
             {
                 fieldName: '${column.javaField}',
                 label: '${column.columnComment}',
-                component: '#if($column.htmlType == "inputNumber")InputNumber#elseif($column.htmlType == "select" || $column.dictType != "")Select#else Input#end',
-                #if($column.isRequired == '1')
-                    rules: 'required',
-                #end
                 #if($column.dictType != "")
+                    component: 'Select',
                     componentProps: {
-                        options: [], // 对应字典: ${column.dictType}
+                        getPopupContainer,
+                        options: getDictOptions(DictEnum.${column.dictType.toUpperCase()}),
                     },
+                #elseif($column.htmlType == "inputNumber")
+                    component: 'InputNumber',
+                #elseif($column.htmlType == "datetime")
+                    component: 'DatePicker',
+                #elseif($column.htmlType == "textarea")
+                    component: 'Input',
+                    componentProps: {
+                        type: 'textarea',
+                    },
+                #else
+                    component: 'Input',
+                #end
+                #if($column.required)
+                    rules: 'required',
                 #end
             },
         #end
