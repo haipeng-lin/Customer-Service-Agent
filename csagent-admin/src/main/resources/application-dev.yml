@@ -102,7 +102,7 @@ spring.data:
     # 数据库索引
     database: 11
     # redis 密码必须配置
-    password: a19720603A
+    password: 20020307
     # 连接超时时间
     timeout: 10s
     # 是否开启ssl
