@@ -37,6 +37,15 @@ public class KbDatasetController extends BaseController {
     private final IKbDatasetService kbDatasetService;
 
     /**
+     * 查询全部知识库
+     */
+    @SaCheckPermission("knowledge:dataset:list")
+    @GetMapping("/listAll")
+    public R<List<KbDatasetVo>> listAll(KbDatasetBo bo) {
+        return R.ok(kbDatasetService.queryList(bo));
+    }
+
+    /**
      * 查询知识库列表
      */
     @SaCheckPermission("knowledge:dataset:list")

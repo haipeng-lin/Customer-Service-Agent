@@ -39,6 +39,15 @@ public class MdModelController extends BaseController {
     private final IMdModelService mdModelService;
 
     /**
+     * 查询全部模型
+     */
+    @SaCheckPermission("model:model:list")
+    @GetMapping("/listAll")
+    public R<List<MdModelVo>> listAll(MdModelBo bo) {
+        return R.ok(mdModelService.queryList(bo));
+    }
+
+    /**
      * 查询模型列表
      */
     @SaCheckPermission("model:model:list")
@@ -66,7 +75,7 @@ public class MdModelController extends BaseController {
     @SaCheckPermission("model:model:query")
     @GetMapping("/{id}")
     public R<MdModelVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
+                                @PathVariable Long id) {
         return R.ok(mdModelService.queryById(id));
     }
 

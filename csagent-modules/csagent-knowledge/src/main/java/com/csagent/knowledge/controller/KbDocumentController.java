@@ -37,6 +37,15 @@ public class KbDocumentController extends BaseController {
     private final IKbDocumentService kbDocumentService;
 
     /**
+     * 查询全部文档
+     */
+    @SaCheckPermission("knowledge:document:list")
+    @GetMapping("/listAll")
+    public R<List<KbDocumentVo>> listAll(KbDocumentBo bo) {
+        return R.ok(kbDocumentService.queryList(bo));
+    }
+
+    /**
      * 查询文档列表
      */
     @SaCheckPermission("knowledge:document:list")

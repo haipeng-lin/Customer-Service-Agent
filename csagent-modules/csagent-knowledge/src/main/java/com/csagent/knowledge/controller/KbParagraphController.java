@@ -37,6 +37,15 @@ public class KbParagraphController extends BaseController {
     private final IKbParagraphService kbParagraphService;
 
     /**
+     * 查询全部段落
+     */
+    @SaCheckPermission("knowledge:paragraph:list")
+    @GetMapping("/listAll")
+    public R<List<KbParagraphVo>> listAll(KbParagraphBo bo) {
+        return R.ok(kbParagraphService.queryList(bo));
+    }
+
+    /**
      * 查询段落列表
      */
     @SaCheckPermission("knowledge:paragraph:list")
