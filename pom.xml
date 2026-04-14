@@ -379,6 +379,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!--  应用模块  -->
+            <dependency>
+                <groupId>com.csagent</groupId>
+                <artifactId>csagent-application</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

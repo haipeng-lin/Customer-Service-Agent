@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <modules>
+        <module>csagent-application</module>
         <module>csagent-demo</module>
         <module>csagent-generator</module>
         <module>csagent-job</module>

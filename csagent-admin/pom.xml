@@ -105,6 +105,12 @@
             <artifactId>csagent-knowledge</artifactId>
         </dependency>
 
+        <!--  应用模块  -->
+        <dependency>
+            <groupId>com.csagent</groupId>
+            <artifactId>csagent-application</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
