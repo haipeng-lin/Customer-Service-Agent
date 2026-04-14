@@ -7,8 +7,7 @@
 
     import { useVbenForm } from '#/adapter/form';
 
-    // 1. API 导入路径改为相对路径，并匹配新的命名风格
-    import { ${businessName}Add, ${businessName}Info, ${businessName}Update } from './api';
+    import { ${businessName}Add, ${businessName}Info, ${businessName}Update } from '#/api/${moduleName}/${businessName}';
     import { modalSchema } from './data';
 
     const emit = defineEmits<{ reload: [] }>();
@@ -50,7 +49,6 @@
             isUpdate.value = !!id;
 
             if (isUpdate.value && id) {
-                // 2. 使用新的获取详情函数名 ${businessName}Info
                 const record = await ${businessName}Info(id);
 
                 // 注意：拦截器已处理 R 对象，直接传 record 即可
@@ -72,7 +70,7 @@
             // getValues 获取为一个 readonly 的对象，需要修改必须先深拷贝一次
             const data = cloneDeep(await formApi.getValues());
 
-            // 3. 根据 isUpdate 状态决定调用新增还是修改接口
+            // 根据 isUpdate 状态决定调用新增还是修改接口
             await (isUpdate.value ? ${businessName}Update(data) : ${businessName}Add(data));
 
             // 通知主页面刷新列表
@@ -92,7 +90,7 @@
 </script>
 
 <template>
-    <BasicModal :close-on-click-modal="false" :title="title" class="w-[550px]">
+    <BasicModal :title="title" class="w-[550px]">
         <BasicForm />
     </BasicModal>
 </template>

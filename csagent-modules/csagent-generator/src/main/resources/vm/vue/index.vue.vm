@@ -11,7 +11,7 @@
 
     import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 
-    import { ${businessName}List, ${businessName}Remove } from './api';
+    import { ${businessName}List, ${businessName}Remove } from '#/api/${moduleName}/${businessName}';
     import { columns, querySchema } from './data';
 
     import ${BusinessName}Modal from './${businessName}-modal.vue';
