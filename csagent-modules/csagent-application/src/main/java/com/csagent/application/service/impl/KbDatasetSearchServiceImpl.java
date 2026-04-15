@@ -1,8 +1,11 @@
 package com.csagent.application.service.impl;
 
 import cn.hutool.json.JSONUtil;
+import com.csagent.application.helper.ApplicationHelper;
+import com.csagent.application.helper.EmbeddingModelBuildHelper;
 import com.csagent.application.service.IKbDatasetSearchService;
 import com.csagent.common.core.exception.ServiceException;
+import com.csagent.common.core.utils.vector.TsVectorGeneratorUtils;
 import com.csagent.knowledge.domain.KbDataset;
 import com.csagent.knowledge.domain.KbDatasetSearch;
 import com.csagent.knowledge.domain.KbDocument;
@@ -71,7 +74,7 @@ public class KbDatasetSearchServiceImpl implements IKbDatasetSearchService {
 
         // 取对应的embedding模型
         String datasetId = kbDatasetSearch.getDatasetIds().split(",")[0];
-        KbDataset kbDataset = kbDatasetMapper.selectKbDatasetById(Long.valueOf(datasetId));
+        KbDataset kbDataset = kbDatasetMapper.selectById(Long.valueOf(datasetId));
         EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(kbDataset);
 
         // 文本检索
@@ -80,7 +83,7 @@ public class KbDatasetSearchServiceImpl implements IKbDatasetSearchService {
         } else {
             Response<Embedding> response = embeddingModel.embed(kbDatasetSearch.getQuestion());
             List<Float> vector = response.content().vectorAsList();
-            applicationHelper.writeEmbeddingTokenLog(kbDataset, response);
+//            applicationHelper.writeEmbeddingTokenLog(kbDataset, response);
             if (kbDatasetSearch.getSearchType().equals("embedding")) {
                 // 向量检索
                 searchRes = embeddingSearch(kbDatasetSearch, vector);
@@ -170,7 +173,7 @@ public class KbDatasetSearchServiceImpl implements IKbDatasetSearchService {
         // 文档Id：集合
         Map<Long, String> documentId2Name = new HashMap<>();
         for (KbDocument knowledgeDocumentEntity : documentList) {
-            documentId2Name.put(knowledgeDocumentEntity.getId(), knowledgeDocumentEntity.getName());
+            documentId2Name.put(knowledgeDocumentEntity.getId(), knowledgeDocumentEntity.getTitle());
         }
 
         List<KbParagraph> kbParagraphList = kbParagraphMapper.selectByIds(paragraphIds);

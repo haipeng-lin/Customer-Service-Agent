@@ -40,7 +40,7 @@ public class KbQuestion extends TenantEntity {
     /**
      * 命中次数
      */
-    private Long hitNum;
+    private Integer hitNum;
 
     /**
      * 修改部门

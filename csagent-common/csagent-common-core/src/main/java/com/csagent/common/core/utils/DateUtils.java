@@ -1,5 +1,6 @@
 package com.csagent.common.core.utils;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -10,6 +11,7 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -375,4 +377,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return DateUtil.format(date, "MM-dd HH:mm");
     }
 
+    public static LocalDateTime getNowLocalDateTime() {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse((new DateTime()).toString(), df);
+    }
 }

@@ -1,13 +1,10 @@
 package com.csagent.knowledge.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.csagent.common.tenant.core.TenantEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,7 +14,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("kb_embedding")
+//@TableName("kb_embedding")
 public class KbEmbedding extends TenantEntity {
 
     @Serial
@@ -68,13 +65,13 @@ public class KbEmbedding extends TenantEntity {
      */
     private String sourceId;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+//    /**
+//     * 创建时间
+//     */
+//    private LocalDateTime createTime;
+//
+//    /**
+//     * 更新时间
+//     */
+//    private LocalDateTime updateTime;
 }

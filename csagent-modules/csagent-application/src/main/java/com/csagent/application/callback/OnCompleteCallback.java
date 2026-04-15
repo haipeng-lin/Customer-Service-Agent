@@ -10,8 +10,9 @@ import java.util.Map;
  * @date 2026/3/26 10:29
  * @description: 回调接口
  */
-// 定义回调接口
 @FunctionalInterface
 public interface OnCompleteCallback {
+
     void onComplete(ChatResponse response, long duration, List<Map<String, Object>> sourceContent);
+
 }
