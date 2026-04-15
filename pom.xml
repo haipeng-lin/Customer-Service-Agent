@@ -65,12 +65,13 @@
         <!-- markdown -->
         <markdown.version>0.64.8</markdown.version>
         <!-- hutool -->
-        <hutool.version>5.8.26</hutool.version>
+<!--        <hutool.version>5.8.26</hutool.version>-->
         <mapdb.version>3.1.0</mapdb.version>
         <hanlp.version>portable-1.8.6</hanlp.version>
         <postgresql.version>42.7.5</postgresql.version>
         <jsoup.version>1.15.4</jsoup.version>
         <markdown.version>0.64.8</markdown.version>
+        <jsoup.version>1.15.4</jsoup.version>
         <!-- 打包默认跳过测试 -->
         <skipTests>true</skipTests>
     </properties>
@@ -428,6 +429,12 @@
                 <groupId>com.hankcs</groupId>
                 <artifactId>hanlp</artifactId>
                 <version>${hanlp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
             </dependency>
 
             <dependency>
