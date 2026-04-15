@@ -23,7 +23,7 @@ public class MdModelBo extends BaseEntity {
     /**
      * Id
      */
-    @NotNull(message = "Id不能为空", groups = { EditGroup.class })
+    @NotNull(message = "Id不能为空", groups = {EditGroup.class})
     private Long id;
 
     /**
