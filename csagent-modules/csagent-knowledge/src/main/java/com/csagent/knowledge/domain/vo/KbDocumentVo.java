@@ -43,6 +43,12 @@ public class KbDocumentVo implements Serializable {
     private Long datasetId;
 
     /**
+     * 知识库标题
+     */
+    @ExcelProperty(value = "知识库标题")
+    private String datasetTitle;
+
+    /**
      * 类型（0-文档 1-文本）
      */
     @ExcelProperty(value = "类型", converter = ExcelDictConvert.class)

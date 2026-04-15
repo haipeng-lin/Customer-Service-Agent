@@ -102,6 +102,24 @@
             <artifactId>csagent-common-websocket</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.csagent</groupId>
+            <artifactId>csagent-common-langchain4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.csagent</groupId>
+            <artifactId>csagent-knowledge</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.csagent</groupId>
+            <artifactId>csagent-model</artifactId>
+        </dependency>
+
+
+
+
     </dependencies>
 
 

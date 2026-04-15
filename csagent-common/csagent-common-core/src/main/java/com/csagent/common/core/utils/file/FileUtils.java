@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 /**
  * 文件处理工具类
@@ -40,4 +41,28 @@ public class FileUtils extends FileUtil {
         String encode = URLEncoder.encode(s, StandardCharsets.UTF_8);
         return encode.replaceAll("\\+", "%20");
     }
+
+    /**
+     * 清理文本杂质
+     * @param input String
+     * @return String
+     */
+    public static String cleanText(String input) {
+        String result = input;
+        for (int i = 0; i < PATTERNS.length; i++) {
+            result = PATTERNS[i].matcher(result).replaceAll(REPLACEMENTS[i]);
+        }
+        return result;
+    }
+
+    private static final Pattern[] PATTERNS = {
+        Pattern.compile("\\n+"),  // 合并多个换行
+        Pattern.compile(" +"),    // 合并多个空格
+        Pattern.compile("#+"),    // 移除所有井号
+        Pattern.compile("\\t+")   // 移除所有制表符
+    };
+
+    private static final String[] REPLACEMENTS = {
+        "\n", " ", "", ""
+    };
 }

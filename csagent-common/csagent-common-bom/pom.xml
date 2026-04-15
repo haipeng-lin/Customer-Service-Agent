@@ -179,6 +179,21 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!--  File -->
+            <dependency>
+                <groupId>com.csagent</groupId>
+                <artifactId>csagent-common-file</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!--  Langchain4j -->
+            <dependency>
+                <groupId>com.csagent</groupId>
+                <artifactId>csagent-common-langchain4j</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 

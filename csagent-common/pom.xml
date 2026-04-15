@@ -34,6 +34,8 @@
         <module>csagent-common-tenant</module>
         <module>csagent-common-websocket</module>
         <module>csagent-common-sse</module>
+        <module>csagent-common-file</module>
+        <module>csagent-common-langchain4j</module>
     </modules>
 
     <artifactId>csagent-common</artifactId>
