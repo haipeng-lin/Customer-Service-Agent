@@ -73,10 +73,10 @@ public class AssistantBuildHelper {
         // 自定义构建上下文记忆
         String memoryKey = applicationChat.getSessionId() + "_" + LoginHelper.getUserId();
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(memoryKey)
-                .maxMessages(application.getMemoryNum())
-                .chatMemoryStore(redisMemoryBuilderHelper)
-                .build();
+            .id(memoryKey)
+            .maxMessages(application.getMemoryNum())
+            .chatMemoryStore(redisMemoryBuilderHelper)
+            .build();
 
         // 更新上下文记忆
 //        if (applicationChat.getContextId() != 0) {
@@ -90,9 +90,9 @@ public class AssistantBuildHelper {
 
         // 构建服务
         AiServices<IAiService> builder =
-                AiServices.builder(IAiService.class)
-                        .streamingChatModel(streamingModel)
-                        .chatMemoryProvider(chatMemoryProvider);
+            AiServices.builder(IAiService.class)
+                .streamingChatModel(streamingModel)
+                .chatMemoryProvider(chatMemoryProvider);
 //        .registerListener(applicationHelper.observability());
         // 未关联知识库
         if (applicationChat.getDatasetList() == null || applicationChat.getDatasetList().isEmpty()) {
@@ -106,8 +106,8 @@ public class AssistantBuildHelper {
         KbDatasetSearch searchDataVo = new KbDatasetSearch();
         searchDataVo.setSearchType(application.getSearchMode());
         String datasetIds = applicationChat.getDatasetList().stream()
-                .map(dto -> String.valueOf(dto.getId())) // 转为 String
-                .collect(Collectors.joining(","));      // 用逗号连接
+            .map(dto -> String.valueOf(dto.getId())) // 转为 String
+            .collect(Collectors.joining(","));      // 用逗号连接
 
         searchDataVo.setDatasetIds(datasetIds);
 
@@ -119,25 +119,25 @@ public class AssistantBuildHelper {
 
         // 内容检索
         ContentRetriever contentRetriever = CsAgentEmbeddingStoreContentRetriever.builder()
-                .embeddingModel(embeddingModel)
-                .searchService(datasetSearchService)
-                .searchDataVo(searchDataVo)
-                .maxResults(application.getTopRank()) // 召回数
-                .minScore(application.getSimilarity().doubleValue()) // 相似度
-                .build();
+            .embeddingModel(embeddingModel)
+            .searchService(datasetSearchService)
+            .searchDataVo(searchDataVo)
+            .maxResults(application.getTopRank()) // 召回数
+            .minScore(application.getSimilarity().doubleValue()) // 相似度
+            .build();
         // 检索增强
         RetrievalAugmentor retrievalAugmentor;
         ContentAggregator contentAggregator = null;
 
         DefaultRetrievalAugmentor.DefaultRetrievalAugmentorBuilder tempBuilder = DefaultRetrievalAugmentor.builder()
-                .contentRetriever(contentRetriever); // 内容检索
+            .contentRetriever(contentRetriever); // 内容检索
 
         // 内容聚合
         retrievalAugmentor = tempBuilder.build();
 
         return builder
-                .retrievalAugmentor(retrievalAugmentor) // 索引增强
-                .build();
+            .retrievalAugmentor(retrievalAugmentor) // 索引增强
+            .build();
     }
 
 }

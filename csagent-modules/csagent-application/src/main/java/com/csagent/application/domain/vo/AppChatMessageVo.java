@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-
 /**
  * 对话消息视图对象 app_chat_message
  *

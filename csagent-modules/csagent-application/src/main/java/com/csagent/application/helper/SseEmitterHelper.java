@@ -80,115 +80,115 @@ public class SseEmitterHelper {
         }, 120, TimeUnit.SECONDS); // 2分钟超时
 
         tokenStream
-                // 整理并转换召回的片段数据，返回前端
-                .onRetrieved((retrievedList) -> {
-                    List<Map<String, Object>> currentBatch = new ArrayList<>();
-                    retrievedList.forEach(item -> {
-                        Map<String, Object> map = new HashMap<>();
-                        JSONObject jsonObject = JSONUtil.parseObj(item.metadata());
-                        map.put("text", item.textSegment().text());
-                        map.put("embeddingId", jsonObject.get("EMBEDDING_ID"));
-                        map.put("score", jsonObject.get("SCORE"));
-                        currentBatch.add(map);
-                    });
+            // 整理并转换召回的片段数据，返回前端
+            .onRetrieved((retrievedList) -> {
+                List<Map<String, Object>> currentBatch = new ArrayList<>();
+                retrievedList.forEach(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    JSONObject jsonObject = JSONUtil.parseObj(item.metadata());
+                    map.put("text", item.textSegment().text());
+                    map.put("embeddingId", jsonObject.get("EMBEDDING_ID"));
+                    map.put("score", jsonObject.get("SCORE"));
+                    currentBatch.add(map);
+                });
 
-                    // 2. 填充到外层的列表中，供后续 callback 使用
-                    retiredMapList.addAll(currentBatch);
+                // 2. 填充到外层的列表中，供后续 callback 使用
+                retiredMapList.addAll(currentBatch);
 
-                    // 发送给前端预览
-                    sendMetaSse(emitter, currentBatch, emitterCompleted);
-                })
-                // 思考过程
-                .onPartialThinking((PartialThinking reasoningContent) -> {
-                    try {
-                        hasReasoningContent.set(true);
+                // 发送给前端预览
+                sendMetaSse(emitter, currentBatch, emitterCompleted);
+            })
+            // 思考过程
+            .onPartialThinking((PartialThinking reasoningContent) -> {
+                try {
+                    hasReasoningContent.set(true);
 
-                        if (!hasSendStart.get()) {
-                            emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "<think>"));
-                            hasSendStart.set(true);
-                        }
-
-                        sendSseData(reasoningContent.text(), emitter, runtimeId, nodeId, emitterCompleted);
-                    } catch (Exception e) {
-                        if (!emitterCompleted.getAndSet(true)) {
-                            sendErrorSse(emitter, e.getMessage(), emitterCompleted);
-                            emitter.completeWithError(e);
-                        }
-                    }
-                })
-                // 工具调用
-                .onToolExecuted((ToolExecution toolExecution) -> {
-                    sendToolSse(emitter, toolExecution.request().name(), emitterCompleted);
-                })
-                .onPartialResponse((content) -> {
-                    try {
-                        if (hasReasoningContent.get() && !hasSendEnd.get()) {
-                            emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "</think>"));
-                            hasSendEnd.set(true);
-                        }
-                        sendSseData(content, emitter, runtimeId, nodeId, emitterCompleted);
-                    } catch (Exception e) {
-                        if (!emitterCompleted.getAndSet(true)) {
-                            sendErrorSse(emitter, e.getMessage(), emitterCompleted);
-                            emitter.completeWithError(e);
-                        }
-                    }
-                })
-                .onCompleteResponse((response) -> {
-
-                    // 取消超时任务
-                    timeoutTask.cancel(false);
-                    timeoutExecutor.shutdown();
-
-                    // 输入的token
-                    int inputTokenCount = 0;
-                    int outputTokenCount = 0;
-                    int totalTokenCount = 0;
-
-                    // 安全获取token使用情况，避免NullPointerException
-                    if (response.tokenUsage() != null) {
-                        inputTokenCount = response.tokenUsage().inputTokenCount() != null ? response.tokenUsage().inputTokenCount() : 0;
-                        outputTokenCount = response.tokenUsage().outputTokenCount() != null ? response.tokenUsage().outputTokenCount() : 0;
-                        totalTokenCount = response.tokenUsage().totalTokenCount() != null ? response.tokenUsage().totalTokenCount() : 0;
+                    if (!hasSendStart.get()) {
+                        emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "<think>"));
+                        hasSendStart.set(true);
                     }
 
-                    // 计算耗时
-                    long second = timer.intervalSecond();
-
-                    // 发送结束信号
-                    Map<String, Object> resMap = new HashMap<>();
-                    resMap.put("inputTokens", inputTokenCount);
-                    resMap.put("outputTokens", outputTokenCount);
-                    resMap.put("totalTokens", totalTokenCount);
-                    resMap.put("time", second);
-                    sendEndSse(emitter, JSONUtil.toJsonStr(resMap), emitterCompleted);
-
-                    if (callback != null) {
-                        callback.onComplete(response, second,retiredMapList);
-                    }
-
-                    // 关闭sse
+                    sendSseData(reasoningContent.text(), emitter, runtimeId, nodeId, emitterCompleted);
+                } catch (Exception e) {
                     if (!emitterCompleted.getAndSet(true)) {
-                        emitter.complete();
+                        sendErrorSse(emitter, e.getMessage(), emitterCompleted);
+                        emitter.completeWithError(e);
                     }
-                })
-                .onError(e -> {
-                    log.error("TokenStream error occurred: {}", e.getMessage(), e);
-
-                    // 取消超时任务
-                    timeoutTask.cancel(false);
-                    timeoutExecutor.shutdown();
-
-                    if (!emitterCompleted.get()) {
-                        // 提供更友好的错误信息
-                        String errorMessage = extractFriendlyErrorMessage(e);
-                        log.info("Sending friendly error message: {}", errorMessage);
-                        sendErrorSse(emitter, errorMessage, emitterCompleted);
-                        emitterCompleted.set(true);
-                        emitter.complete();
+                }
+            })
+            // 工具调用
+            .onToolExecuted((ToolExecution toolExecution) -> {
+                sendToolSse(emitter, toolExecution.request().name(), emitterCompleted);
+            })
+            .onPartialResponse((content) -> {
+                try {
+                    if (hasReasoningContent.get() && !hasSendEnd.get()) {
+                        emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "</think>"));
+                        hasSendEnd.set(true);
                     }
-                })
-                .start();
+                    sendSseData(content, emitter, runtimeId, nodeId, emitterCompleted);
+                } catch (Exception e) {
+                    if (!emitterCompleted.getAndSet(true)) {
+                        sendErrorSse(emitter, e.getMessage(), emitterCompleted);
+                        emitter.completeWithError(e);
+                    }
+                }
+            })
+            .onCompleteResponse((response) -> {
+
+                // 取消超时任务
+                timeoutTask.cancel(false);
+                timeoutExecutor.shutdown();
+
+                // 输入的token
+                int inputTokenCount = 0;
+                int outputTokenCount = 0;
+                int totalTokenCount = 0;
+
+                // 安全获取token使用情况，避免NullPointerException
+                if (response.tokenUsage() != null) {
+                    inputTokenCount = response.tokenUsage().inputTokenCount() != null ? response.tokenUsage().inputTokenCount() : 0;
+                    outputTokenCount = response.tokenUsage().outputTokenCount() != null ? response.tokenUsage().outputTokenCount() : 0;
+                    totalTokenCount = response.tokenUsage().totalTokenCount() != null ? response.tokenUsage().totalTokenCount() : 0;
+                }
+
+                // 计算耗时
+                long second = timer.intervalSecond();
+
+                // 发送结束信号
+                Map<String, Object> resMap = new HashMap<>();
+                resMap.put("inputTokens", inputTokenCount);
+                resMap.put("outputTokens", outputTokenCount);
+                resMap.put("totalTokens", totalTokenCount);
+                resMap.put("time", second);
+                sendEndSse(emitter, JSONUtil.toJsonStr(resMap), emitterCompleted);
+
+                if (callback != null) {
+                    callback.onComplete(response, second, retiredMapList);
+                }
+
+                // 关闭sse
+                if (!emitterCompleted.getAndSet(true)) {
+                    emitter.complete();
+                }
+            })
+            .onError(e -> {
+                log.error("TokenStream error occurred: {}", e.getMessage(), e);
+
+                // 取消超时任务
+                timeoutTask.cancel(false);
+                timeoutExecutor.shutdown();
+
+                if (!emitterCompleted.get()) {
+                    // 提供更友好的错误信息
+                    String errorMessage = extractFriendlyErrorMessage(e);
+                    log.info("Sending friendly error message: {}", errorMessage);
+                    sendErrorSse(emitter, errorMessage, emitterCompleted);
+                    emitterCompleted.set(true);
+                    emitter.complete();
+                }
+            })
+            .start();
     }
 
     /**
@@ -223,83 +223,83 @@ public class SseEmitterHelper {
         AtomicBoolean hasSendEnd = new AtomicBoolean(false); // 是否发送了思考结束标识
 
         tokenStream
-                // 思考过程
-                .onPartialThinking((PartialThinking reasoningContent) -> {
-                    if (needSend) {
-                        try {
-                            hasReasoningContent.set(true);
+            // 思考过程
+            .onPartialThinking((PartialThinking reasoningContent) -> {
+                if (needSend) {
+                    try {
+                        hasReasoningContent.set(true);
 
-                            if (!hasSendStart.get()) {
-                                emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "<think>"));
-                                hasSendStart.set(true);
-                            }
+                        if (!hasSendStart.get()) {
+                            emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "<think>"));
+                            hasSendStart.set(true);
+                        }
 
-                            sendSseData(reasoningContent.text(), emitter, runtimeId, nodeId, emitterCompleted);
-                        } catch (Exception e) {
-                            if (!emitterCompleted.getAndSet(true)) {
-                                sendErrorSse(emitter, e.getMessage(), emitterCompleted);
-                                emitter.completeWithError(e);
-                            }
+                        sendSseData(reasoningContent.text(), emitter, runtimeId, nodeId, emitterCompleted);
+                    } catch (Exception e) {
+                        if (!emitterCompleted.getAndSet(true)) {
+                            sendErrorSse(emitter, e.getMessage(), emitterCompleted);
+                            emitter.completeWithError(e);
                         }
                     }
-                })
-                // 工具调用
-                .onToolExecuted((ToolExecution toolExecution) -> {
-                    sendToolSse(emitter, toolExecution.request().name(), emitterCompleted);
-                })
-                .onPartialResponse((content) -> {
-                    if (needSend) {
-                        try {
-                            if (hasReasoningContent.get() && !hasSendEnd.get()) {
-                                emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "</think>"));
-                                hasSendStart.set(true);
-                            }
+                }
+            })
+            // 工具调用
+            .onToolExecuted((ToolExecution toolExecution) -> {
+                sendToolSse(emitter, toolExecution.request().name(), emitterCompleted);
+            })
+            .onPartialResponse((content) -> {
+                if (needSend) {
+                    try {
+                        if (hasReasoningContent.get() && !hasSendEnd.get()) {
+                            emitter.send(SseUtils.buildSendData(runtimeId, nodeId, "</think>"));
+                            hasSendStart.set(true);
+                        }
 
-                            sendSseData(content, emitter, runtimeId, nodeId, emitterCompleted);
-                        } catch (Exception e) {
-                            if (!emitterCompleted.getAndSet(true)) {
-                                sendErrorSse(emitter, e.getMessage(), emitterCompleted);
-                                emitter.completeWithError(e);
-                            }
+                        sendSseData(content, emitter, runtimeId, nodeId, emitterCompleted);
+                    } catch (Exception e) {
+                        if (!emitterCompleted.getAndSet(true)) {
+                            sendErrorSse(emitter, e.getMessage(), emitterCompleted);
+                            emitter.completeWithError(e);
                         }
                     }
-                })
-                .onCompleteResponse((response) -> {
+                }
+            })
+            .onCompleteResponse((response) -> {
 
-                    // 输入的token
-                    int inputTokenCount = 0;
-                    int outputTokenCount = 0;
-                    int totalTokenCount = 0;
+                // 输入的token
+                int inputTokenCount = 0;
+                int outputTokenCount = 0;
+                int totalTokenCount = 0;
 
-                    // 安全获取token使用情况，避免NullPointerException
-                    if (response.tokenUsage() != null) {
-                        inputTokenCount = response.tokenUsage().inputTokenCount() != null ? response.tokenUsage().inputTokenCount() : 0;
-                        outputTokenCount = response.tokenUsage().outputTokenCount() != null ? response.tokenUsage().outputTokenCount() : 0;
-                        totalTokenCount = response.tokenUsage().totalTokenCount() != null ? response.tokenUsage().totalTokenCount() : 0;
-                    }
+                // 安全获取token使用情况，避免NullPointerException
+                if (response.tokenUsage() != null) {
+                    inputTokenCount = response.tokenUsage().inputTokenCount() != null ? response.tokenUsage().inputTokenCount() : 0;
+                    outputTokenCount = response.tokenUsage().outputTokenCount() != null ? response.tokenUsage().outputTokenCount() : 0;
+                    totalTokenCount = response.tokenUsage().totalTokenCount() != null ? response.tokenUsage().totalTokenCount() : 0;
+                }
 
-                    // 发送结束信号
-                    Map<String, Object> resMap = new HashMap<>();
-                    resMap.put("inputTokenCount", inputTokenCount);
-                    resMap.put("outputTokenCount", outputTokenCount);
-                    resMap.put("totalTokenCount", totalTokenCount);
-                    resMap.put("content", response.aiMessage() != null ? response.aiMessage().text() : "");
+                // 发送结束信号
+                Map<String, Object> resMap = new HashMap<>();
+                resMap.put("inputTokenCount", inputTokenCount);
+                resMap.put("outputTokenCount", outputTokenCount);
+                resMap.put("totalTokenCount", totalTokenCount);
+                resMap.put("content", response.aiMessage() != null ? response.aiMessage().text() : "");
 
-                    sendEndCallback.accept(JSONUtil.toJsonStr(resMap));
-                })
-                .onError(e -> {
-                    log.error("TokenStream error occurred: {}", e.getMessage(), e);
+                sendEndCallback.accept(JSONUtil.toJsonStr(resMap));
+            })
+            .onError(e -> {
+                log.error("TokenStream error occurred: {}", e.getMessage(), e);
 
-                    if (!emitterCompleted.get()) {
-                        // 提供更友好的错误信息
-                        String errorMessage = extractFriendlyErrorMessage(e);
-                        log.info("Sending friendly error message: {}", errorMessage);
-                        sendErrorSse(emitter, errorMessage, emitterCompleted);
-                        emitterCompleted.set(true);
-                        emitter.complete();
-                    }
-                })
-                .start();
+                if (!emitterCompleted.get()) {
+                    // 提供更友好的错误信息
+                    String errorMessage = extractFriendlyErrorMessage(e);
+                    log.info("Sending friendly error message: {}", errorMessage);
+                    sendErrorSse(emitter, errorMessage, emitterCompleted);
+                    emitterCompleted.set(true);
+                    emitter.complete();
+                }
+            })
+            .start();
     }
 
     /**
@@ -316,7 +316,7 @@ public class SseEmitterHelper {
 
         try {
             sseEmitter.send(SseEmitter.event().name(SseConstants.TOOL)
-                    .data(resVo));
+                .data(resVo));
         } catch (IllegalStateException e) {
             emitterCompleted.set(true);
         } catch (IOException e) {
@@ -373,7 +373,7 @@ public class SseEmitterHelper {
 
         try {
             sseEmitter.send(SseEmitter.event().name(SseConstants.DONE)
-                    .data(resVo));
+                .data(resVo));
         } catch (IllegalStateException e) {
             emitterCompleted.set(true);
         } catch (IOException e) {
@@ -391,7 +391,7 @@ public class SseEmitterHelper {
     public void sendEndSse(SseEmitter sseEmitter, String resVo) {
         try {
             sseEmitter.send(SseEmitter.event().name(SseConstants.DONE)
-                    .data(resVo));
+                .data(resVo));
         } catch (IOException e) {
             sseEmitter.completeWithError(e);
         }
@@ -410,7 +410,7 @@ public class SseEmitterHelper {
 
         try {
             sseEmitter.send(SseEmitter.event().name(SseConstants.META)
-                    .data(metaData));
+                .data(metaData));
         } catch (IllegalStateException e) {
             emitterCompleted.set(true);
         } catch (IOException e) {

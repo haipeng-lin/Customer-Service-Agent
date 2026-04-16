@@ -56,9 +56,9 @@ public class EmbeddingModelBuildHelper {
 
     private EmbeddingModel buildQwen() {
         return QwenEmbeddingModel.builder()
-                .apiKey(modelConfig.get("key"))
-                .modelName(modelConfig.get("model"))
-                .build();
+            .apiKey(modelConfig.get("key"))
+            .modelName(modelConfig.get("model"))
+            .build();
     }
 
     /**
@@ -69,9 +69,9 @@ public class EmbeddingModelBuildHelper {
     private EmbeddingModel buildOllama() {
 
         return OllamaEmbeddingModel.builder()
-                .baseUrl(modelConfig.get("baseUrl"))
-                .modelName(modelConfig.get("model"))
-                .build();
+            .baseUrl(modelConfig.get("baseUrl"))
+            .modelName(modelConfig.get("model"))
+            .build();
     }
 
     /**
@@ -81,9 +81,9 @@ public class EmbeddingModelBuildHelper {
     private EmbeddingModel buildOpenAI() {
 
         return OpenAiEmbeddingModel.builder()
-                .baseUrl(modelConfig.get("baseUrl"))
-                .apiKey(modelConfig.get("key"))
-                .modelName(modelConfig.get("model"))
-                .build();
+            .baseUrl(modelConfig.get("baseUrl"))
+            .apiKey(modelConfig.get("key"))
+            .modelName(modelConfig.get("model"))
+            .build();
     }
 }

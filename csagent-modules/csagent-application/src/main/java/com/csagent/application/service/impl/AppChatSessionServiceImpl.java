@@ -40,7 +40,7 @@ public class AppChatSessionServiceImpl implements IAppChatSessionService {
      * @return 对话会话
      */
     @Override
-    public AppChatSessionVo queryById(Long id){
+    public AppChatSessionVo queryById(Long id) {
         return baseMapper.selectVoById(id);
     }
 
@@ -115,7 +115,7 @@ public class AppChatSessionServiceImpl implements IAppChatSessionService {
     /**
      * 保存前的数据校验
      */
-    private void validEntityBeforeSave(AppChatSession entity){
+    private void validEntityBeforeSave(AppChatSession entity) {
         //TODO 做一些数据校验,如唯一约束
     }
 
@@ -128,7 +128,7 @@ public class AppChatSessionServiceImpl implements IAppChatSessionService {
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
+        if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;

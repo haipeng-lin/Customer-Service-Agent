@@ -55,9 +55,9 @@ public class CsAgentEmbeddingStoreContentRetriever implements ContentRetriever {
     private final KbDatasetSearch searchDataVo;
 
     public CsAgentEmbeddingStoreContentRetriever(EmbeddingStore<TextSegment> embeddingStore,
-                                                  EmbeddingModel embeddingModel,
-                                                  IKbDatasetSearchService searchService,
-                                                  KbDatasetSearch searchDataVo) {
+                                                 EmbeddingModel embeddingModel,
+                                                 IKbDatasetSearchService searchService,
+                                                 KbDatasetSearch searchDataVo) {
         this(
             DEFAULT_DISPLAY_NAME,
             embeddingStore,
@@ -71,10 +71,10 @@ public class CsAgentEmbeddingStoreContentRetriever implements ContentRetriever {
     }
 
     public CsAgentEmbeddingStoreContentRetriever(EmbeddingStore<TextSegment> embeddingStore,
-                                                  EmbeddingModel embeddingModel,
-                                                  int maxResults,
-                                                  IKbDatasetSearchService searchService,
-                                                  KbDatasetSearch searchDataVo) {
+                                                 EmbeddingModel embeddingModel,
+                                                 int maxResults,
+                                                 IKbDatasetSearchService searchService,
+                                                 KbDatasetSearch searchDataVo) {
         this(
             DEFAULT_DISPLAY_NAME,
             embeddingStore,
@@ -88,11 +88,11 @@ public class CsAgentEmbeddingStoreContentRetriever implements ContentRetriever {
     }
 
     public CsAgentEmbeddingStoreContentRetriever(EmbeddingStore<TextSegment> embeddingStore,
-                                                  EmbeddingModel embeddingModel,
-                                                  Integer maxResults,
-                                                  Double minScore,
-                                                  IKbDatasetSearchService searchService,
-                                                  KbDatasetSearch searchDataVo) {
+                                                 EmbeddingModel embeddingModel,
+                                                 Integer maxResults,
+                                                 Double minScore,
+                                                 IKbDatasetSearchService searchService,
+                                                 KbDatasetSearch searchDataVo) {
         this(
             DEFAULT_DISPLAY_NAME,
             embeddingStore,
@@ -107,13 +107,13 @@ public class CsAgentEmbeddingStoreContentRetriever implements ContentRetriever {
 
     @Builder
     private CsAgentEmbeddingStoreContentRetriever(String displayName,
-                                                   EmbeddingStore<TextSegment> embeddingStore,
-                                                   EmbeddingModel embeddingModel,
-                                                   Function<Query, Integer> dynamicMaxResults,
-                                                   Function<Query, Double> dynamicMinScore,
-                                                   Function<Query, Filter> dynamicFilter,
-                                                   IKbDatasetSearchService searchService,
-                                                   KbDatasetSearch searchDataVo) {
+                                                  EmbeddingStore<TextSegment> embeddingStore,
+                                                  EmbeddingModel embeddingModel,
+                                                  Function<Query, Integer> dynamicMaxResults,
+                                                  Function<Query, Double> dynamicMinScore,
+                                                  Function<Query, Filter> dynamicFilter,
+                                                  IKbDatasetSearchService searchService,
+                                                  KbDatasetSearch searchDataVo) {
         this.displayName = getOrDefault(displayName, DEFAULT_DISPLAY_NAME);
         /*this.embeddingStore = ensureNotNull(embeddingStore, "embeddingStore");
         this.embeddingModel = ensureNotNull(

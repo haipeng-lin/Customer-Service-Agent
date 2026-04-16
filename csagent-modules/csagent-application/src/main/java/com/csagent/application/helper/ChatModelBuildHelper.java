@@ -60,9 +60,9 @@ public class ChatModelBuildHelper {
     private ChatModel buildOllama() {
 
         return OllamaChatModel.builder()
-                .baseUrl(model.getAddress())
-                .modelName(application.getModelName())
-                .build();
+            .baseUrl(model.getAddress())
+            .modelName(application.getModelName())
+            .build();
     }
 
     /**
@@ -73,11 +73,11 @@ public class ChatModelBuildHelper {
     private ChatModel buildQwen() {
 
         return QwenChatModel.builder()
-                .apiKey(model.getKey())
-                .modelName(application.getModelName())
-                .temperature(application.getTemperature().floatValue())
-                .listeners(List.of(applicationHelper.chatModelObservability()))
-                .build();
+            .apiKey(model.getKey())
+            .modelName(application.getModelName())
+            .temperature(application.getTemperature().floatValue())
+            .listeners(List.of(applicationHelper.chatModelObservability()))
+            .build();
     }
 
     /**
@@ -89,10 +89,10 @@ public class ChatModelBuildHelper {
         log.info("模型信息：{}", model.getKey());
 
         return OpenAiChatModel.builder()
-                .baseUrl(model.getAddress())
-                .apiKey(model.getKey())
-                .modelName(application.getModelName())
-                .listeners(List.of(applicationHelper.chatModelObservability()))
-                .build();
+            .baseUrl(model.getAddress())
+            .apiKey(model.getKey())
+            .modelName(application.getModelName())
+            .listeners(List.of(applicationHelper.chatModelObservability()))
+            .build();
     }
 }

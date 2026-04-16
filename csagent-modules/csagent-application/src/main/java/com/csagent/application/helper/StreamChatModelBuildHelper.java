@@ -46,9 +46,9 @@ public class StreamChatModelBuildHelper {
      */
     private StreamingChatModel buildOllama() {
         return OllamaStreamingChatModel.builder()
-                .baseUrl(model.getAddress())
-                .modelName(application.getModelName())
-                .build();
+            .baseUrl(model.getAddress())
+            .modelName(application.getModelName())
+            .build();
     }
 
     /**
@@ -58,10 +58,10 @@ public class StreamChatModelBuildHelper {
      */
     private StreamingChatModel buildQwen() {
         return QwenStreamingChatModel.builder()
-                .apiKey(model.getKey())
-                .modelName(application.getModelName())
-                .temperature(application.getTemperature().floatValue())
-                .build();
+            .apiKey(model.getKey())
+            .modelName(application.getModelName())
+            .temperature(application.getTemperature().floatValue())
+            .build();
     }
 
     /**
@@ -71,14 +71,14 @@ public class StreamChatModelBuildHelper {
      */
     private StreamingChatModel buildOpenAI() {
         return OpenAiStreamingChatModel.builder()
-                .baseUrl(model.getAddress())
-                .apiKey(model.getKey())
-                .returnThinking(true)
-                .modelName(application.getModelName())
-                .temperature(application.getTemperature())
+            .baseUrl(model.getAddress())
+            .apiKey(model.getKey())
+            .returnThinking(true)
+            .modelName(application.getModelName())
+            .temperature(application.getTemperature())
 //                .topP(Double.valueOf(application.getTopRank()))
-                .maxCompletionTokens(application.getMaxReplyToken())
-                .listeners(List.of(applicationHelper.chatModelObservability()))
-                .build();
+            .maxCompletionTokens(application.getMaxReplyToken())
+            .listeners(List.of(applicationHelper.chatModelObservability()))
+            .build();
     }
 }

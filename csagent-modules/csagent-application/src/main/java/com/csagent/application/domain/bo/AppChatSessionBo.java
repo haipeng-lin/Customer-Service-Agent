@@ -22,7 +22,7 @@ public class AppChatSessionBo extends BaseEntity {
     /**
      * Id
      */
-    @NotNull(message = "Id不能为空", groups = { EditGroup.class })
+    @NotNull(message = "Id不能为空", groups = {EditGroup.class})
     private Long id;
 
     /**

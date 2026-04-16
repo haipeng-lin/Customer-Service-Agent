@@ -83,9 +83,9 @@ public class ApplicationHelper {
 
                 ChatRequestParameters parameters = chatRequest.parameters();
                 log.info("调用的参数: modelName={}, temperature={}, topP={}",
-                        parameters.modelName(),
-                        parameters.temperature(),
-                        parameters.topP());
+                    parameters.modelName(),
+                    parameters.temperature(),
+                    parameters.topP());
 
                 log.info("完整请求参数: {}", parameters);
                 log.info("=== LangChain4j 可观测性 - 请求结束 ===");
@@ -99,9 +99,9 @@ public class ApplicationHelper {
 
                 if (chatResponse.metadata() != null && chatResponse.metadata().tokenUsage() != null) {
                     log.info("Token使用情况: 输入Token={}, 输出Token={}, 总Token={}",
-                            chatResponse.metadata().tokenUsage().inputTokenCount(),
-                            chatResponse.metadata().tokenUsage().outputTokenCount(),
-                            chatResponse.metadata().tokenUsage().totalTokenCount());
+                        chatResponse.metadata().tokenUsage().inputTokenCount(),
+                        chatResponse.metadata().tokenUsage().outputTokenCount(),
+                        chatResponse.metadata().tokenUsage().totalTokenCount());
                 }
 
                 if (chatResponse.metadata() != null && chatResponse.metadata().finishReason() != null) {
