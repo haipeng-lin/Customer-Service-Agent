@@ -1,9 +1,9 @@
-package com.csagent.common.langchain4j.handler.impl;
+package com.csagent.common.langchain4j.handler.file.impl;
 
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.common.core.domain.vo.KbDocumentItemVo;
-import com.csagent.common.langchain4j.handler.CsAgentDocumentSplitter;
-import com.csagent.common.langchain4j.handler.FileHandlerInterface;
+import com.csagent.common.langchain4j.handler.file.CsAgentDocumentSplitter;
+import com.csagent.common.langchain4j.handler.file.FileHandlerInterface;
 import dev.langchain4j.data.document.DocumentParser;
 import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
 

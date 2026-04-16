@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csagent.knowledge.mapper.KbEmbeddingMapper">
+
+    <resultMap id="SearchVoMap" type="com.csagent.knowledge.domain.vo.SearchVo">
+        <result column="document_id" property="documentId"/>
+        <result column="paragraph_id" property="paragraphId"/>
+        <result column="comprehensive_score" property="comprehensiveScore"/>
+        <result column="similarity" property="similarity"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="KbEmbedding">
+        INSERT INTO knowledge_embedding (embedding_id,
+                                         dataset_id,
+                                         document_id,
+                                         paragraph_id,
+                                         embedding,
+                                         search_vector,
+                                         status,
+                                         source_type,
+                                         source_id,
+                                         create_time)
+        VALUES (#{embeddingId},
+                #{datasetId},
+                #{documentId},
+                #{paragraphId},
+                #{embedding, typeHandler=com.csagent.common.mybatis.handler.VectorTypeHandler},
+                #{searchVector, typeHandler=com.csagent.common.mybatis.handler.TsVectorTypeHandler},
+                #{status},
+                #{sourceType},
+                #{sourceId},
+                #{createTime})
+    </insert>
+
+    <delete id="deleteByDocumentIds">
+        DELETE FROM knowledge_embedding
+        WHERE document_id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByDocumentId">
+        DELETE
+        FROM knowledge_embedding
+        WHERE document_id = #{documentId}
+    </delete>
+
+    <delete id="deleteByTypeAndSourceId">
+        DELETE
+        FROM knowledge_embedding
+        WHERE source_type = #{sourceType}:
+        AND source_id in
+        <foreach item="id" collection="sourceIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByParagraphId">
+        DELETE
+        FROM knowledge_embedding
+        WHERE paragraph_id = #{paragraphId}
+    </delete>
+
+    <delete id="deleteByParagraphIds">
+        DELETE
+        FROM knowledge_embedding
+        WHERE paragraph_id in
+        <foreach item="id" collection="paragraphIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByTypeAndSourceIdAndParagraphId">
+        DELETE
+        FROM knowledge_embedding
+        WHERE source_type = #{sourceType}
+          and source_id = #{sourceId}
+          and paragraph_id = #{paragraphId}
+    </delete>
+
+    <select id="embeddingSearch" resultMap="SearchVoMap">
+        SELECT
+        document_id,
+        paragraph_id,
+        comprehensive_score,
+        comprehensive_score as similarity
+        FROM (
+        SELECT DISTINCT ON ("paragraph_id") (similarity), *, similarity AS comprehensive_score
+        FROM (
+        SELECT *, (1 - (embedding &lt;=> #{vector}::vector)) AS similarity
+        FROM knowledge_embedding
+        WHERE dataset_id IN
+        <foreach item="datasetId" collection="datasetIds" open="(" separator="," close=")">
+            #{datasetId}
+        </foreach>
+        AND status = 0
+        ) TEMP
+        ORDER BY paragraph_id, similarity DESC
+        ) DISTINCT_TEMP
+        WHERE comprehensive_score > #{score}
+        ORDER BY comprehensive_score DESC
+        LIMIT #{limit}
+    </select>
+
+    <!--    <select id="textSearch" resultType="com.zetknowledge.knowledge.domain.vo.SearchVo">-->
+    <!--        SELECT-->
+    <!--        paragraph_id,-->
+    <!--        document_id,-->
+    <!--        comprehensive_score,-->
+    <!--        comprehensive_score as similarity-->
+    <!--        FROM (-->
+    <!--        SELECT DISTINCT ON ("paragraph_id") (similarity), *, similarity AS comprehensive_score-->
+    <!--        FROM (-->
+    <!--        SELECT *, ts_rank_cd(search_vector, websearch_to_tsquery('simple', #{tsQuery}), 32) AS similarity-->
+    <!--        FROM knowledge_embedding-->
+    <!--        WHERE dataset_id IN-->
+    <!--        <foreach item="datasetId" collection="datasetIds" open="(" separator="," close=")">-->
+    <!--            #{datasetId}-->
+    <!--        </foreach>-->
+    <!--        AND active = 1-->
+    <!--        ) TEMP-->
+    <!--        ORDER BY paragraph_id, similarity DESC-->
+    <!--        ) DISTINCT_TEMP-->
+    <!--        WHERE comprehensive_score > #{score}-->
+    <!--        ORDER BY comprehensive_score DESC-->
+    <!--        LIMIT #{limit}-->
+    <!--    </select>-->
+
+    <!--    <select id="mixSearch" resultType="com.zetknowledge.knowledge.domain.vo.SearchVo">-->
+    <!--        SELECT-->
+    <!--        paragraph_id,-->
+    <!--        document_id,-->
+    <!--        comprehensive_score,-->
+    <!--        comprehensive_score as similarity-->
+    <!--        FROM (-->
+    <!--        SELECT DISTINCT ON ("paragraph_id") (similarity), *, similarity AS comprehensive_score-->
+    <!--        FROM (-->
+    <!--        SELECT *,-->
+    <!--        ((1 - (embedding &lt;=> #{vector}::vector)) +-->
+    <!--        ts_rank_cd(search_vector, websearch_to_tsquery('simple', #{tsQuery}), 32)) AS similarity-->
+    <!--        FROM knowledge_embedding-->
+    <!--        WHERE dataset_id IN-->
+    <!--        <foreach item="datasetId" collection="datasetIds" open="(" separator="," close=")">-->
+    <!--            #{datasetId}-->
+    <!--        </foreach>-->
+    <!--        AND active = 1-->
+    <!--        ) TEMP-->
+    <!--        ORDER BY paragraph_id, similarity DESC-->
+    <!--        ) DISTINCT_TEMP-->
+    <!--        WHERE comprehensive_score > #{score}-->
+    <!--        ORDER BY comprehensive_score DESC-->
+    <!--        LIMIT #{limit}-->
+    <!--    </select>-->
+
+    <!--    <update id="updateDatasetByIds">-->
+    <!--        UPDATE knowledge_embedding-->
+    <!--        SET dataset_id = #{datasetId}-->
+    <!--        WHERE document_id IN-->
+    <!--        <foreach item="id" collection="list" open="(" separator="," close=")">-->
+    <!--            #{id}-->
+    <!--        </foreach>-->
+    <!--    </update>-->
+
+</mapper>

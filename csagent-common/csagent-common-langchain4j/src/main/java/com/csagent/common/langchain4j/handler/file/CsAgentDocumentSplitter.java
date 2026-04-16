@@ -1,4 +1,4 @@
-package com.csagent.common.langchain4j.handler;
+package com.csagent.common.langchain4j.handler.file;
 
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.common.core.domain.vo.KbDocumentItemVo;

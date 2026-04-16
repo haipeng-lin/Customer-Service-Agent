@@ -1,9 +1,9 @@
 package com.csagent.knowledge.mapper;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.csagent.common.mybatis.core.mapper.BaseMapperPlus;
 import com.csagent.knowledge.domain.KbEmbedding;
 import com.csagent.knowledge.domain.vo.SearchVo;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,8 +13,7 @@ import java.util.List;
  * @date 2026/3/10 14:05
  * @description: 向量Mapper
  */
-@Mapper
-public interface KbEmbeddingMapper {
+public interface KbEmbeddingMapper  extends BaseMapperPlus<KbEmbedding, KbEmbedding> {
 
     /**
      * 根据文档ID批量删除
@@ -77,9 +76,10 @@ public interface KbEmbeddingMapper {
      * 插入向量
      *
      * @param kbEmbedding 向量
+     * @return
      */
     @DS("postgres")
-    void insert(KbEmbedding kbEmbedding);
+    int insert(KbEmbedding kbEmbedding);
 
     /**
      * 根据来源类型和来源Id删除

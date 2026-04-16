@@ -1,8 +1,8 @@
-package com.csagent.common.langchain4j.handler;
+package com.csagent.common.langchain4j.handler.file;
 
-import com.csagent.common.langchain4j.handler.impl.DefaultFileHandler;
-import com.csagent.common.langchain4j.handler.impl.MarkdownFileHandler;
-import com.csagent.common.langchain4j.handler.impl.PdfFileHandler;
+import com.csagent.common.langchain4j.handler.file.impl.DefaultFileHandler;
+import com.csagent.common.langchain4j.handler.file.impl.MarkdownFileHandler;
+import com.csagent.common.langchain4j.handler.file.impl.PdfFileHandler;
 
 /**
  * @author haipeng-lin

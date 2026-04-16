@@ -40,17 +40,17 @@ public class MdModelToken extends TenantEntity {
     /**
      * 输入token数
      */
-    private Long inputToken;
+    private Integer inputToken;
 
     /**
      * 输出token数
      */
-    private Long outputToken;
+    private Integer outputToken;
 
     /**
      * 消耗总token
      */
-    private Long totalToken;
+    private Integer totalToken;
 
     /**
      * 用户Id

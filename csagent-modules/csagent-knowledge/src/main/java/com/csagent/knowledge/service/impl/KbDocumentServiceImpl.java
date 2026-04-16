@@ -1,28 +1,27 @@
 package com.csagent.knowledge.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.csagent.common.core.utils.MapstructUtils;
-import com.csagent.common.core.utils.StringUtils;
-import com.csagent.common.mybatis.core.page.TableDataInfo;
-import com.csagent.common.mybatis.core.page.PageQuery;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.csagent.common.core.utils.MapstructUtils;
+import com.csagent.common.core.utils.StringUtils;
+import com.csagent.common.mybatis.core.page.PageQuery;
+import com.csagent.common.mybatis.core.page.TableDataInfo;
 import com.csagent.knowledge.domain.KbDataset;
+import com.csagent.knowledge.domain.KbDocument;
+import com.csagent.knowledge.domain.bo.KbDocumentBo;
+import com.csagent.knowledge.domain.vo.KbDocumentVo;
+import com.csagent.knowledge.mapper.KbDocumentMapper;
+import com.csagent.knowledge.service.IKbDocumentService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.csagent.knowledge.domain.bo.KbDocumentBo;
-import com.csagent.knowledge.domain.vo.KbDocumentVo;
-import com.csagent.knowledge.domain.KbDocument;
-import com.csagent.knowledge.mapper.KbDocumentMapper;
-import com.csagent.knowledge.service.IKbDocumentService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 
 /**
  * 文档Service业务层处理
@@ -86,12 +85,8 @@ public class KbDocumentServiceImpl implements IKbDocumentService {
         lqw.eq(StringUtils.isNotBlank(bo.getType()), KbDocument::getType, bo.getType());
         lqw.eq(StringUtils.isNotBlank(bo.getTitle()), KbDocument::getTitle, bo.getTitle());
         lqw.eq(StringUtils.isNotBlank(bo.getContent()), KbDocument::getContent, bo.getContent());
-
         lqw.eq(StringUtils.isNotBlank(bo.getEmbeddingStatus()), KbDocument::getEmbeddingStatus, bo.getEmbeddingStatus());
         lqw.eq(StringUtils.isNotBlank(bo.getQuestionStatus()), KbDocument::getQuestionStatus, bo.getQuestionStatus());
-        lqw.eq(bo.getQuestionTime() != null, KbDocument::getQuestionTime, bo.getQuestionTime());
-        lqw.eq(StringUtils.isNotBlank(bo.getAnswerType()), KbDocument::getAnswerType, bo.getAnswerType());
-        lqw.eq(bo.getRedirectSimilar() != null, KbDocument::getRedirectSimilar, bo.getRedirectSimilar());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), KbDocument::getStatus, bo.getStatus());
         return lqw;
     }

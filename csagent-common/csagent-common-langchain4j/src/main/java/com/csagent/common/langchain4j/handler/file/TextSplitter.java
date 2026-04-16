@@ -1,4 +1,4 @@
-package com.csagent.common.langchain4j.handler;
+package com.csagent.common.langchain4j.handler.file;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;

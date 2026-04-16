@@ -1,8 +1,8 @@
-package com.csagent.common.langchain4j.handler.impl;
+package com.csagent.common.langchain4j.handler.file.impl;
 
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.common.core.domain.vo.KbDocumentItemVo;
-import com.csagent.common.langchain4j.handler.FileHandlerInterface;
+import com.csagent.common.langchain4j.handler.file.FileHandlerInterface;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;

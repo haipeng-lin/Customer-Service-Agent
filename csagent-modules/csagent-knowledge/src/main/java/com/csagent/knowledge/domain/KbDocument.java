@@ -1,15 +1,13 @@
 package com.csagent.knowledge.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.csagent.common.tenant.core.TenantEntity;
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.io.Serial;
+import java.util.Date;
 
 /**
  * 文档对象 kb_document
@@ -59,7 +57,7 @@ public class KbDocument extends TenantEntity {
     /**
      * 分段数
      */
-    private Long segmentCount;
+    private Integer segmentCount;
 
     /**
      * 向量状态（0-待向量 1-向量中 2-完成）
@@ -80,11 +78,6 @@ public class KbDocument extends TenantEntity {
      * 生成问题时间
      */
     private Date questionTime;
-
-    /**
-     * 命中处理方式
-     */
-    private String answerType;
 
     /**
      * 返回相似度

@@ -1,7 +1,19 @@
 package com.csagent.application.helper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.csagent.application.domain.AppApplicationDatasetRelation;
+import com.csagent.application.mapper.AppApplicationDatasetRelationMapper;
+import com.csagent.common.core.enums.TokenConsumeSource;
+import com.csagent.common.core.utils.DateUtils;
+import com.csagent.knowledge.domain.KbDataset;
+import com.csagent.knowledge.domain.KbDatasetSimple;
 import com.csagent.knowledge.mapper.KbDatasetMapper;
+import com.csagent.model.domain.MdModel;
+import com.csagent.model.domain.MdModelToken;
 import com.csagent.model.mapper.MdModelMapper;
+import com.csagent.model.mapper.MdModelTokenMapper;
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.model.chat.listener.ChatModelErrorContext;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
@@ -10,12 +22,16 @@ import dev.langchain4j.model.chat.listener.ChatModelResponseContext;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,8 +43,8 @@ import java.util.List;
 @Component
 public class ApplicationHelper {
 
-//    @Autowired
-//    private AppApplicationDatasetRelationMapper appApplicationDatasetRelationMapper;
+    @Autowired
+    private AppApplicationDatasetRelationMapper appApplicationDatasetRelationMapper;
 
     @Autowired
     private KbDatasetMapper kbDatasetMapper;
@@ -37,7 +53,7 @@ public class ApplicationHelper {
     private MdModelMapper mdModelMapper;
 
     @Autowired
-//    private MdModelTokenMapper mdModelTokenMapper;
+    private MdModelTokenMapper mdModelTokenMapper;
 
     /**
      * 构建 ChatModel 监听器
@@ -141,61 +157,63 @@ public class ApplicationHelper {
      * @param applicationId 知识库Id
      * @return 结果
      */
-//    public List<KbDatasetSimple> getRelationDatasetList(Long applicationId) {
-//        List<KbDatasetSimple> kbDatasetSimpleList = new LinkedList<>();
-//
-//        List<AppApplicationDatasetRelation> relationEntityList = appApplicationDatasetRelationMapper.selectByApplicationId(applicationId);
-//        if (!CollectionUtils.isEmpty(relationEntityList)) {
-//
-//            List<Long> datasetIds = relationEntityList.stream().map(AppApplicationDatasetRelation::getDatasetId).toList();
-//            List<KbDataset> datasetList = kbDatasetMapper.selectByIds(datasetIds);
-//            for (KbDataset kbDataset : datasetList) {
-//                KbDatasetSimple dto = new KbDatasetSimple();
-//                BeanUtils.copyProperties(kbDataset, dto);
-//                kbDatasetSimpleList.add(dto);
-//            }
-//        }
-//
-//        return kbDatasetSimpleList;
-//    }
+    public List<KbDatasetSimple> getRelationDatasetList(Long applicationId) {
+        List<KbDatasetSimple> kbDatasetSimpleList = new LinkedList<>();
+        LambdaQueryWrapper<AppApplicationDatasetRelation> lqw = new LambdaQueryWrapper<AppApplicationDatasetRelation>()
+            .eq(AppApplicationDatasetRelation::getApplicationId, applicationId);
+        List<AppApplicationDatasetRelation> relationEntityList = appApplicationDatasetRelationMapper.selectList(lqw);
+        if (!CollectionUtils.isEmpty(relationEntityList)) {
 
-//    /**
-//     * 记录token使用日志
-//     *
-//     * @param kbDataset 知识库
-//     * @param response  Response<Embedding>
-//     */
-//    public void writeEmbeddingTokenLog(KbDataset kbDataset, Response<Embedding> response) {
-//        TokenUsage tokenUsage = response.tokenUsage();
-//        // Ollama的一些本地模型，没有返回使用的token
-//        if (tokenUsage != null) {
-//            MdModel mdModel = mdModelMapper.selectMdModelById(kbDataset.getModelId());
-//            MdModelToken mdModelToken = new MdModelToken();
-//            mdModelToken.setSource(TokenConsumeSource.EMBEDDING.getCode());
-//            mdModelToken.setModelId(mdModel.getId());
-//            mdModelToken.setInputToken(tokenUsage.inputTokenCount());
-//            mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
-//            mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
-//            mdModelToken.setCreateTime(DateUtils.getNowDate());
-//            mdModelTokenMapper.insertMdModelToken(mdModelToken);
-//        }
-//    }
-//
-//    /**
-//     * 记录token日志
-//     *
-//     * @param modelId    模型Id
-//     * @param source     来源
-//     * @param tokenUsage token使用
-//     */
-//    public void writeTokenLog(Long modelId, String source, TokenUsage tokenUsage) {
-//        MdModelToken mdModelToken = new MdModelToken();
-//        mdModelToken.setModelId(modelId);
-//        mdModelToken.setSource(source);
-//        mdModelToken.setInputToken(tokenUsage.inputTokenCount());
-//        mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
-//        mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
-//        mdModelToken.setCreateTime(DateUtils.getNowDate());
-//        mdModelTokenMapper.insertMdModelToken(mdModelToken);
-//    }
+            List<Long> datasetIds = relationEntityList.stream().map(AppApplicationDatasetRelation::getDatasetId).toList();
+            List<KbDataset> datasetList = kbDatasetMapper.selectByIds(datasetIds);
+            for (KbDataset kbDataset : datasetList) {
+                KbDatasetSimple dto = new KbDatasetSimple();
+                BeanUtils.copyProperties(kbDataset, dto);
+
+                kbDatasetSimpleList.add(dto);
+            }
+        }
+
+        return kbDatasetSimpleList;
+    }
+
+    /**
+     * 记录token使用日志
+     *
+     * @param kbDataset 知识库
+     * @param response  Response<Embedding>
+     */
+    public void writeEmbeddingTokenLog(KbDataset kbDataset, Response<Embedding> response) {
+        TokenUsage tokenUsage = response.tokenUsage();
+        // Ollama的一些本地模型，没有返回使用的token
+        if (tokenUsage != null) {
+            MdModel mdModel = mdModelMapper.selectById(kbDataset.getEmbeddingModelId());
+            MdModelToken mdModelToken = new MdModelToken();
+            mdModelToken.setSource(TokenConsumeSource.EMBEDDING.getCode());
+            mdModelToken.setModelId(mdModel.getId());
+            mdModelToken.setInputToken(tokenUsage.inputTokenCount());
+            mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
+            mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
+            mdModelToken.setCreateTime(DateUtils.getNowDate());
+            mdModelTokenMapper.insert(mdModelToken);
+        }
+    }
+
+    /**
+     * 记录token日志
+     *
+     * @param modelId    模型Id
+     * @param source     来源
+     * @param tokenUsage token使用
+     */
+    public void writeTokenLog(Long modelId, String source, TokenUsage tokenUsage) {
+        MdModelToken mdModelToken = new MdModelToken();
+        mdModelToken.setModelId(modelId);
+        mdModelToken.setSource(source);
+        mdModelToken.setInputToken(tokenUsage.inputTokenCount());
+        mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
+        mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
+        mdModelToken.setCreateTime(DateUtils.getNowDate());
+        mdModelTokenMapper.insert(mdModelToken);
+    }
 }

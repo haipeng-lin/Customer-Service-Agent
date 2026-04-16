@@ -1,16 +1,14 @@
 package com.csagent.knowledge.domain.bo;
 
 import com.csagent.common.core.validate.EditGroup;
-import com.csagent.knowledge.domain.KbDocument;
 import com.csagent.common.mybatis.core.domain.BaseEntity;
+import com.csagent.knowledge.domain.KbDocument;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
 
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 文档业务对象 kb_document
@@ -83,11 +81,6 @@ public class KbDocumentBo extends BaseEntity {
      * 命中处理方式
      */
     private String answerType;
-
-    /**
-     * 返回相似度
-     */
-    private Long redirectSimilar;
 
     /**
      * 状态（0-启用 1-禁用）
