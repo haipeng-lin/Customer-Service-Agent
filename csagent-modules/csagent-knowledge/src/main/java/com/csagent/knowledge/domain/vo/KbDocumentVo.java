@@ -1,13 +1,12 @@
 package com.csagent.knowledge.domain.vo;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.csagent.knowledge.domain.KbDocument;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
+import com.csagent.common.translation.annotation.Translation;
+import com.csagent.common.translation.constant.TransConstant;
+import com.csagent.knowledge.domain.KbDocument;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
@@ -45,15 +44,8 @@ public class KbDocumentVo implements Serializable {
     /**
      * 知识库标题
      */
-    @ExcelProperty(value = "知识库标题")
+    @Translation(type = TransConstant.DATASET_ID_TO_TITLE, mapper = "datasetId")
     private String datasetTitle;
-
-    /**
-     * 类型（0-文档 1-文本）
-     */
-    @ExcelProperty(value = "类型", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(readConverterExp = "0=-文档,1=-文本")
-    private String type;
 
     /**
      * 文档标题
@@ -105,18 +97,6 @@ public class KbDocumentVo implements Serializable {
      */
     @ExcelProperty(value = "生成问题时间")
     private Date questionTime;
-
-    /**
-     * 命中处理方式
-     */
-    @ExcelProperty(value = "命中处理方式")
-    private String answerType;
-
-    /**
-     * 返回相似度
-     */
-    @ExcelProperty(value = "返回相似度")
-    private Long redirectSimilar;
 
     /**
      * 状态（0-启用 1-禁用）

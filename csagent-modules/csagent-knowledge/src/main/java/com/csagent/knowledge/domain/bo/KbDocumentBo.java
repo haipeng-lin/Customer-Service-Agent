@@ -33,11 +33,6 @@ public class KbDocumentBo extends BaseEntity {
     private Long datasetId;
 
     /**
-     * 类型（0-文档 1-文本）
-     */
-    private String type;
-
-    /**
      * 文档标题
      */
     private String title;
@@ -76,11 +71,6 @@ public class KbDocumentBo extends BaseEntity {
      * 生成问题时间
      */
     private Date questionTime;
-
-    /**
-     * 命中处理方式
-     */
-    private String answerType;
 
     /**
      * 状态（0-启用 1-禁用）

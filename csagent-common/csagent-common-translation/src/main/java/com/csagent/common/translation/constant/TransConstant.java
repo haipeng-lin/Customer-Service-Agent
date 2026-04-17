@@ -32,4 +32,14 @@ public interface TransConstant {
      */
     String OSS_ID_TO_URL = "oss_id_to_url";
 
+    /**
+     * 知识库id转名称
+     */
+    String DATASET_ID_TO_TITLE = "dataset_id_to_title";
+
+    /**
+     * 文档id转标题
+     */
+    String DOCUMENT_ID_TO_TITLE = "document_id_to_title";
+
 }

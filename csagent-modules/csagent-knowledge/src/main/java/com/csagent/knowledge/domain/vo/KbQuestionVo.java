@@ -1,16 +1,15 @@
 package com.csagent.knowledge.domain.vo;
 
-import com.csagent.knowledge.domain.KbQuestion;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
-import com.csagent.common.excel.annotation.ExcelDictFormat;
-import com.csagent.common.excel.convert.ExcelDictConvert;
+import com.csagent.common.translation.annotation.Translation;
+import com.csagent.common.translation.constant.TransConstant;
+import com.csagent.knowledge.domain.KbQuestion;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -38,6 +37,12 @@ public class KbQuestionVo implements Serializable {
      */
     @ExcelProperty(value = "知识库Id")
     private Long datasetId;
+
+    /**
+     * 知识库标题
+     */
+    @Translation(type = TransConstant.DATASET_ID_TO_TITLE, mapper = "datasetId")
+    private String datasetTitle;
 
     /**
      * 内容

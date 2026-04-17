@@ -35,11 +35,6 @@ public class KbDocument extends TenantEntity {
     private Long datasetId;
 
     /**
-     * 类型（0-文档 1-文本）
-     */
-    private String type;
-
-    /**
      * 文档标题
      */
     private String title;
@@ -79,20 +74,11 @@ public class KbDocument extends TenantEntity {
      */
     private Date questionTime;
 
-    /**
-     * 返回相似度
-     */
-    private Long redirectSimilar;
 
     /**
      * 状态（0-启用 1-禁用）
      */
     private String status;
-
-    /**
-     * 修改部门
-     */
-    private Long updateDept;
 
 
 }

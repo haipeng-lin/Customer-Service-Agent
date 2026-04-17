@@ -2,19 +2,17 @@ package com.csagent.knowledge.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csagent.common.core.utils.MapstructUtils;
 import com.csagent.common.core.utils.StringUtils;
 import com.csagent.common.mybatis.core.page.PageQuery;
 import com.csagent.common.mybatis.core.page.TableDataInfo;
-import com.csagent.knowledge.domain.KbDataset;
 import com.csagent.knowledge.domain.KbDocument;
 import com.csagent.knowledge.domain.bo.KbDocumentBo;
 import com.csagent.knowledge.domain.vo.KbDocumentVo;
 import com.csagent.knowledge.mapper.KbDocumentMapper;
 import com.csagent.knowledge.service.IKbDocumentService;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,13 +54,9 @@ public class KbDocumentServiceImpl implements IKbDocumentService {
      */
     @Override
     public TableDataInfo<KbDocumentVo> queryPageList(KbDocumentBo bo, PageQuery pageQuery) {
-        // 1. 构建支持连表的 Wrapper
-        MPJLambdaWrapper<KbDocument> wrapper = buildJoinWrapper(bo);
-
-        // 2. 使用 selectJoinPage，第一个参数是 VO 的 Class，第二个是分页对象，第三个是 Wrapper
-        IPage<KbDocumentVo> kbDocumentVoIPage = baseMapper.selectJoinPage(pageQuery.build(), KbDocumentVo.class, wrapper);
-
-        return TableDataInfo.build(kbDocumentVoIPage);
+        LambdaQueryWrapper<KbDocument> lqw = buildQueryWrapper(bo);
+        Page<KbDocumentVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        return TableDataInfo.build(result);
     }
 
     /**
@@ -82,7 +76,6 @@ public class KbDocumentServiceImpl implements IKbDocumentService {
         LambdaQueryWrapper<KbDocument> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(KbDocument::getId);
         lqw.eq(bo.getDatasetId() != null, KbDocument::getDatasetId, bo.getDatasetId());
-        lqw.eq(StringUtils.isNotBlank(bo.getType()), KbDocument::getType, bo.getType());
         lqw.eq(StringUtils.isNotBlank(bo.getTitle()), KbDocument::getTitle, bo.getTitle());
         lqw.eq(StringUtils.isNotBlank(bo.getContent()), KbDocument::getContent, bo.getContent());
         lqw.eq(StringUtils.isNotBlank(bo.getEmbeddingStatus()), KbDocument::getEmbeddingStatus, bo.getEmbeddingStatus());
@@ -151,24 +144,4 @@ public class KbDocumentServiceImpl implements IKbDocumentService {
                 .eq(KbDocument::getId, id));
     }
 
-    /**
-     * 核心：构建连表 Wrapper
-     */
-    private MPJLambdaWrapper<KbDocument> buildJoinWrapper(KbDocumentBo bo) {
-        MPJLambdaWrapper<KbDocument> wrapper = new MPJLambdaWrapper<KbDocument>()
-            .selectAll(KbDocument.class) // 查询主表 KbDocument 的所有字段
-            // 连表查询：查 KbDataset 表的 name 字段，映射到 KbDocumentVo 的 datasetName 属性
-            .selectAs(KbDataset::getTitle, KbDocumentVo::getTitle)
-            // 连表条件：KbDocument.datasetId = KbDataset.id
-            .leftJoin(KbDataset.class, KbDataset::getId, KbDocument::getDatasetId);
-
-        // --- 以下是原有的过滤条件 ---
-        wrapper.orderByAsc(KbDocument::getId);
-        wrapper.eq(bo.getDatasetId() != null, KbDocument::getDatasetId, bo.getDatasetId());
-        wrapper.like(StringUtils.isNotBlank(bo.getTitle()), KbDocument::getTitle, bo.getTitle());
-        wrapper.eq(StringUtils.isNotBlank(bo.getStatus()), KbDocument::getStatus, bo.getStatus());
-        // ... 其他条件以此类推
-
-        return wrapper;
-    }
 }

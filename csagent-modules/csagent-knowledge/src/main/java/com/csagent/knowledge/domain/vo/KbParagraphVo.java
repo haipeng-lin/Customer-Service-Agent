@@ -1,16 +1,17 @@
 package com.csagent.knowledge.domain.vo;
 
-import com.csagent.knowledge.domain.KbParagraph;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
+import com.csagent.common.translation.annotation.Translation;
+import com.csagent.common.translation.constant.TransConstant;
+import com.csagent.knowledge.domain.KbParagraph;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -40,10 +41,22 @@ public class KbParagraphVo implements Serializable {
     private Long datasetId;
 
     /**
+     * 知识库标题
+     */
+    @Translation(type = TransConstant.DATASET_ID_TO_TITLE, mapper = "datasetId")
+    private String datasetTitle;
+
+    /**
      * 文档Id
      */
     @ExcelProperty(value = "文档Id")
     private Long documentId;
+
+    /**
+     * 文档标题
+     */
+    @Translation(type = TransConstant.DOCUMENT_ID_TO_TITLE, mapper = "documentId")
+    private String documentTitle;
 
     /**
      * 段落标题
