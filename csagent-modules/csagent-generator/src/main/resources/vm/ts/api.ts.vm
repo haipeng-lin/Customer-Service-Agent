@@ -58,5 +58,5 @@ export function ${businessName}Update(data: ${BusinessName}Form) {
  * @returns void
  */
 export function ${businessName}Remove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/${moduleName}/${businessName}/\${id}`);
+    return alovaInstance.deleteWithMsg<void>(`/${moduleName}/${businessName}/${id}`);
 }
