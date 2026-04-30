@@ -66,10 +66,4 @@ public class MdModelBo extends BaseEntity {
      */
     private String status;
 
-    /**
-     * 修改部门
-     */
-    private Long updateDept;
-
-
 }

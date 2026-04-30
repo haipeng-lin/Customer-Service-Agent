@@ -33,7 +33,7 @@ public class MdModelToken extends TenantEntity {
     private Long modelId;
 
     /**
-     * 消耗来源（0-网页 1-APP）
+     * 消耗来源（chat-对话 embedding-向量 question-问题）
      */
     private String source;
 
@@ -66,11 +66,5 @@ public class MdModelToken extends TenantEntity {
      * 消息Id
      */
     private Long messageId;
-
-    /**
-     * 修改部门
-     */
-    private Long updateDept;
-
 
 }

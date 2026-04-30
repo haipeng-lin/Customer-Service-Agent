@@ -4,6 +4,8 @@ import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
+import com.csagent.common.translation.annotation.Translation;
+import com.csagent.common.translation.constant.TransConstant;
 import com.csagent.model.domain.MdModelToken;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -39,6 +41,12 @@ public class MdModelTokenVo implements Serializable {
     private Long modelId;
 
     /**
+     * 模型名称
+     */
+    @Translation(type = TransConstant.MODEL_ID_TO_NAME, mapper = "modelId")
+    private String modelName;
+
+    /**
      * 消耗来源（0-网页 1-APP）
      */
     @ExcelProperty(value = "消耗来源", converter = ExcelDictConvert.class)
@@ -68,6 +76,12 @@ public class MdModelTokenVo implements Serializable {
      */
     @ExcelProperty(value = "用户Id")
     private Long userId;
+
+    /**
+     * 用户名
+     */
+    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "userId")
+    private String username;
 
     /**
      * 应用Id

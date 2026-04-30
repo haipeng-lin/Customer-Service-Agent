@@ -82,11 +82,4 @@ public class MdModelVo implements Serializable {
     @ExcelDictFormat(readConverterExp = "0=-启用,1=-禁用")
     private String status;
 
-    /**
-     * 修改部门
-     */
-    @ExcelProperty(value = "修改部门")
-    private Long updateDept;
-
-
 }
