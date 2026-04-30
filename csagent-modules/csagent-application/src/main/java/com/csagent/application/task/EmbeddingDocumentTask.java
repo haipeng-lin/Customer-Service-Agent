@@ -7,10 +7,11 @@ import com.csagent.application.helper.ApplicationHelper;
 import com.csagent.application.helper.ChatModelBuildHelper;
 import com.csagent.application.helper.EmbeddingModelBuildHelper;
 import com.csagent.common.core.enums.*;
+import com.csagent.common.core.context.UserContextHolder;
 import com.csagent.common.core.utils.DateUtils;
 import com.csagent.common.core.utils.vector.TextChunkUtils;
 import com.csagent.common.core.utils.vector.TsVectorGeneratorUtils;
-import com.csagent.common.satoken.utils.LoginHelper;
+import com.csagent.common.tenant.helper.TenantHelper;
 import com.csagent.knowledge.domain.*;
 import com.csagent.knowledge.mapper.*;
 import com.csagent.model.domain.MdModel;
@@ -83,12 +84,11 @@ public class EmbeddingDocumentTask {
 
         try {
             // 根据文档Id查询段落列表
-            LambdaQueryWrapper<KbParagraph> lqw = new LambdaQueryWrapper<KbParagraph>()
-                .eq(KbParagraph::getDocumentId, documentId);
+            LambdaQueryWrapper<KbParagraph> lqw = new LambdaQueryWrapper<KbParagraph>().eq(KbParagraph::getDocumentId, documentId);
             List<KbParagraph> paragraphEntityList = kbParagraphMapper.selectList(lqw);
             if (!CollectionUtils.isEmpty(paragraphEntityList)) {
                 // 删除已经向量化的数据
-                kbEmbeddingMapper.deleteByDocumentId(String.valueOf(documentId));
+                kbEmbeddingMapper.deleteByDocumentId(documentId);
 
                 // 选择embedding模型
                 embeddingModel = embeddingModelBuildHelper.build(kbDataset);
@@ -139,10 +139,12 @@ public class EmbeddingDocumentTask {
      */
     @Async
     public void executeAsyncQuestionTask(MdModel mdModel, List<Long> documentIds, KbQuestionGeneration questionGeneration) {
-
+        TenantHelper.setDynamic(UserContextHolder.getTenantId());
+        Long userId = UserContextHolder.getUserId();
+        Long deptId = UserContextHolder.getDeptId();
         AppApplication appApplication = new AppApplication();
         appApplication.setTemperature(0.95);
-        appApplication.setModelName(mdModel.getModels().split(";")[0]);
+        appApplication.setModelName(mdModel.getModels().split(",")[0]);
         ChatModel chatModel = chatModelBuildHelper.build(mdModel, appApplication);
 
         for (Long documentId : documentIds) {
@@ -152,20 +154,25 @@ public class EmbeddingDocumentTask {
                 kbDocumentMapper.updateById(documentInfo);
 
                 // 查出分段内容
-                LambdaQueryWrapper<KbParagraph> lqw = new LambdaQueryWrapper<KbParagraph>()
-                    .eq(KbParagraph::getDocumentId, documentId)
-                    .eq(KbParagraph::getStatus, UniversalStatus.ENABLE.getCode());
+                LambdaQueryWrapper<KbParagraph> lqw = new LambdaQueryWrapper<KbParagraph>().eq(KbParagraph::getDocumentId, documentId).eq(KbParagraph::getStatus, UniversalStatus.ENABLE.getCode());
                 List<KbParagraph> paragraphList = kbParagraphMapper.selectList(lqw);
                 for (KbParagraph paragraph : paragraphList) {
 
                     String question = questionGeneration.getPrompt().replace("{data}", paragraph.getContent());
                     ChatResponse chatResponse = chatModel.chat(UserMessage.from(question));
+                    // 1. 获取 AI 返回的原始文本
+                    String originalText = chatResponse.aiMessage().text();
+
+                    // 2. 移除思考模型特有的 <think> 标签及其内部所有内容
+                    // (?s) 表示开启单行模式，让 . 能够匹配换行符
+                    String cleanedText = originalText.replaceAll("(?s)<think>.*?</think>", "").trim();
+
+                    // 3. 使用清洗后的文本进行 Jsoup 解析
+                    Document doc = Jsoup.parse(cleanedText);
+                    Elements questions = doc.select("question");
 
                     // 记录token使用情况
                     applicationHelper.writeTokenLog(mdModel.getId(), TokenConsumeSource.QUESTION.getCode(), chatResponse.tokenUsage());
-
-                    Document doc = Jsoup.parse(chatResponse.aiMessage().text());
-                    Elements questions = doc.select("question");
 
                     for (Element questionMatch : questions) {
 
@@ -174,7 +181,9 @@ public class EmbeddingDocumentTask {
                         kbQuestion.setContent(questionMatch.text());
                         kbQuestion.setHitNum(0);
                         kbQuestion.setDatasetId(paragraph.getDatasetId());
-                        kbQuestion.setCreateTime(DateUtils.getNowDate());
+                        kbQuestion.setCreateDept(deptId);
+                        kbQuestion.setCreateBy(userId);
+                        kbQuestion.setUpdateBy(userId);
                         kbQuestionMapper.insert(kbQuestion);
 
                         // 写入问题关联
@@ -183,8 +192,9 @@ public class EmbeddingDocumentTask {
                         kbQuestionParagraph.setDocumentId(paragraph.getDocumentId());
                         kbQuestionParagraph.setParagraphId(paragraph.getId());
                         kbQuestionParagraph.setQuestionId(kbQuestion.getId());
-                        kbQuestionParagraph.setCreateBy(LoginHelper.getUserId());
-                        kbQuestionParagraph.setCreateTime(DateUtils.getNowDate());
+                        kbQuestionParagraph.setCreateDept(deptId);
+                        kbQuestionParagraph.setCreateBy(userId);
+                        kbQuestionParagraph.setUpdateBy(userId);
                         kbQuestionParagraphMapper.insert(kbQuestionParagraph);
                     }
                 }
@@ -246,8 +256,7 @@ public class EmbeddingDocumentTask {
         }
 
         // 段落关联的问题，需要重新索引
-        LambdaQueryWrapper<KbQuestionParagraph> lqw = new LambdaQueryWrapper<KbQuestionParagraph>()
-            .eq(KbQuestionParagraph::getParagraphId, paragraph.getId());
+        LambdaQueryWrapper<KbQuestionParagraph> lqw = new LambdaQueryWrapper<KbQuestionParagraph>().eq(KbQuestionParagraph::getParagraphId, paragraph.getId());
         List<KbQuestionParagraph> relationList = kbQuestionParagraphMapper.selectList(lqw);
 
         // 查出段落问题信息

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.csagent.application.domain.AppApplicationDatasetRelation;
 import com.csagent.application.mapper.AppApplicationDatasetRelationMapper;
+import com.csagent.common.core.context.UserContextHolder;
 import com.csagent.common.core.enums.TokenConsumeSource;
-import com.csagent.common.core.utils.DateUtils;
 import com.csagent.knowledge.domain.KbDataset;
 import com.csagent.knowledge.domain.KbDatasetSimple;
 import com.csagent.knowledge.mapper.KbDatasetMapper;
@@ -194,7 +194,10 @@ public class ApplicationHelper {
             mdModelToken.setInputToken(tokenUsage.inputTokenCount());
             mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
             mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
-            mdModelToken.setCreateTime(DateUtils.getNowDate());
+            mdModelToken.setCreateDept(UserContextHolder.getDeptId());
+            mdModelToken.setUserId(UserContextHolder.getUserId());
+            mdModelToken.setCreateBy(UserContextHolder.getUserId());
+            mdModelToken.setUpdateBy(UserContextHolder.getUserId());
             mdModelTokenMapper.insert(mdModelToken);
         }
     }
@@ -213,7 +216,10 @@ public class ApplicationHelper {
         mdModelToken.setInputToken(tokenUsage.inputTokenCount());
         mdModelToken.setOutputToken(tokenUsage.outputTokenCount());
         mdModelToken.setTotalToken(tokenUsage.totalTokenCount());
-        mdModelToken.setCreateTime(DateUtils.getNowDate());
+        mdModelToken.setCreateDept(UserContextHolder.getDeptId());
+        mdModelToken.setUserId(UserContextHolder.getUserId());
+        mdModelToken.setCreateBy(UserContextHolder.getUserId());
+        mdModelToken.setUpdateBy(UserContextHolder.getUserId());
         mdModelTokenMapper.insert(mdModelToken);
     }
 }
