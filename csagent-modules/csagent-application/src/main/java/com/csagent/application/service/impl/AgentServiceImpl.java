@@ -255,4 +255,12 @@ public class AgentServiceImpl implements IAgentService {
         }
     }
 
+    @Override
+    public List<KbQuestionParagraph> selectByQuestionIdsAndDatasetId(List<Long> questionIds, Long datasetId) {
+        LambdaQueryWrapper<KbQuestionParagraph> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(KbQuestionParagraph::getQuestionId, questionIds)
+            .eq(KbQuestionParagraph::getDatasetId, datasetId);
+        return kbQuestionParagraphMapper.selectList(wrapper);
+    }
+
 }

@@ -5,15 +5,15 @@ import com.csagent.application.service.IAgentService;
 import com.csagent.application.service.IKbDatasetSearchService;
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.common.core.domain.R;
-import com.csagent.knowledge.domain.KbDatasetSearch;
-import com.csagent.knowledge.domain.KbDocumentSave;
-import com.csagent.knowledge.domain.KbQuestionGeneration;
+import com.csagent.knowledge.domain.*;
+import com.csagent.knowledge.domain.vo.KbDocumentSplitVo;
 import com.csagent.knowledge.domain.vo.SearchVo;
 import com.csagent.knowledge.service.IKbQuestionParagraphService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,23 +36,6 @@ public class AgentController {
     private IKbQuestionParagraphService kbQuestionParagraphService;
 
     /**
-     * 预览文档
-     */
-    @PostMapping("/previewDocument")
-    public R previewDocument(KbDocumentPreview kbDocumentPreview) {
-        return R.ok(agentService.previewFile(kbDocumentPreview));
-    }
-
-    /**
-     * 保存文档
-     */
-    @PostMapping("/saveDocument")
-    public R<Void> saveDocument(@RequestBody KbDocumentSave kbDocumentSave) {
-        agentService.saveDocument(kbDocumentSave);
-        return R.ok();
-    }
-
-    /**
      * 向量化知识库
      */
     @PostMapping("/embeddingDatasetId")
@@ -67,6 +50,23 @@ public class AgentController {
     @PostMapping("/embeddingDocument")
     public R<Void> embeddingDocument(@RequestParam("documentIds") String documentIds) {
         agentService.embeddingDocument(documentIds);
+        return R.ok();
+    }
+
+    /**
+     * 预览文档
+     */
+    @PostMapping("/previewDocument")
+    public R<List<KbDocumentSplitVo>> previewDocument(KbDocumentPreview kbDocumentPreview) {
+        return R.ok(agentService.previewFile(kbDocumentPreview));
+    }
+
+    /**
+     * 保存文档
+     */
+    @PostMapping("/saveDocument")
+    public R<Void> saveDocument(@RequestBody KbDocumentSave kbDocumentSave) {
+        agentService.saveDocument(kbDocumentSave);
         return R.ok();
     }
 
@@ -88,30 +88,30 @@ public class AgentController {
     }
 
 
-//    /**
-//     * 获取问题关联的知识库、文档、段落
-//     *
-//     * @param questionIds 问题Id字符串
-//     * @param datasetId   知识库Id
-//     * @return 问题关联信息列表
-//     */
-//    @GetMapping("/getQuestionRelation")
-//    public R<List<KbQuestionParagraph>> getQuestionRelation(@RequestParam("questionIds") String questionIds,
-//                                          @RequestParam("datasetId") Long datasetId) {
-//        List<Long> questionIdList = Arrays.stream(questionIds.split(","))
-//                .map(Long::parseLong)
-//                .toList();
-//        List<KbQuestionParagraph> voList = kbQuestionParagraphService.selectByQuestionIdsAndDatasetId(questionIdList, datasetId);
-//        return R.ok(voList);
-//    }
-//
-//    /**
-//     * 操作问题关联
-//     */
-//    @PostMapping("/doQuestionRelation")
-//    public R<Void> doQuestionRelation(@RequestBody KbQuestionRelationOperate kbQuestionRelationOperate) {
-//        agentService.doQuestionRelation(kbQuestionRelationOperate);
-//        return R.ok();
-//    }
+    /**
+     * 获取问题关联的知识库、文档、段落
+     *
+     * @param questionIds 问题Id字符串
+     * @param datasetId   知识库Id
+     * @return 问题关联信息列表
+     */
+    @GetMapping("/getQuestionRelation")
+    public R<List<KbQuestionParagraph>> getQuestionRelation(@RequestParam("questionIds") String questionIds,
+                                                            @RequestParam("datasetId") Long datasetId) {
+        List<Long> questionIdList = Arrays.stream(questionIds.split(","))
+                .map(Long::parseLong)
+                .toList();
+        List<KbQuestionParagraph> voList = agentService.selectByQuestionIdsAndDatasetId(questionIdList, datasetId);
+        return R.ok(voList);
+    }
+
+    /**
+     * 操作问题关联
+     */
+    @PostMapping("/doQuestionRelation")
+    public R<Void> doQuestionRelation(@RequestBody KbQuestionRelationOperate kbQuestionRelationOperate) {
+        agentService.doQuestionRelation(kbQuestionRelationOperate);
+        return R.ok();
+    }
 
 }

@@ -3,6 +3,7 @@ package com.csagent.application.service;
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.knowledge.domain.KbDocumentSave;
 import com.csagent.knowledge.domain.KbQuestionGeneration;
+import com.csagent.knowledge.domain.KbQuestionParagraph;
 import com.csagent.knowledge.domain.KbQuestionRelationOperate;
 import com.csagent.knowledge.domain.vo.KbDocumentSplitVo;
 
@@ -57,4 +58,13 @@ public interface IAgentService {
      * @param datasetId 知识库Id
      */
     void embeddingDataset(Long datasetId);
+
+    /**
+     * 根据问题Id列表和知识库Id查询
+     *
+     * @param questionIdList 问题Id列表
+     * @param datasetId      知识库Id
+     * @return 结果
+     */
+    List<KbQuestionParagraph> selectByQuestionIdsAndDatasetId(List<Long> questionIdList, Long datasetId);
 }
