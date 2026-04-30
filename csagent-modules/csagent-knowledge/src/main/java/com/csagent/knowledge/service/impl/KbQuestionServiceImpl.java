@@ -75,7 +75,7 @@ public class KbQuestionServiceImpl implements IKbQuestionService {
         LambdaQueryWrapper<KbQuestion> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(KbQuestion::getId);
         lqw.eq(bo.getDatasetId() != null, KbQuestion::getDatasetId, bo.getDatasetId());
-        lqw.eq(StringUtils.isNotBlank(bo.getContent()), KbQuestion::getContent, bo.getContent());
+        lqw.like(StringUtils.isNotBlank(bo.getContent()), KbQuestion::getContent, bo.getContent());
         lqw.eq(bo.getHitNum() != null, KbQuestion::getHitNum, bo.getHitNum());
         return lqw;
     }
