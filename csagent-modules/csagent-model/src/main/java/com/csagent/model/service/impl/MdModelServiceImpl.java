@@ -83,7 +83,6 @@ public class MdModelServiceImpl implements IMdModelService {
         lqw.eq(StringUtils.isNotBlank(bo.getModels()), MdModel::getModels, bo.getModels());
         lqw.eq(StringUtils.isNotBlank(bo.getIcon()), MdModel::getIcon, bo.getIcon());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), MdModel::getStatus, bo.getStatus());
-        lqw.eq(bo.getUpdateDept() != null, MdModel::getUpdateDept, bo.getUpdateDept());
         return lqw;
     }
 
