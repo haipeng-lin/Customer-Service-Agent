@@ -70,7 +70,7 @@ public interface KbEmbeddingMapper  extends BaseMapperPlus<KbEmbedding, KbEmbedd
      * @param documentId 文档Id
      */
     @DS("postgres")
-    void deleteByDocumentId(String documentId);
+    void deleteByDocumentId(Long documentId);
 
     /**
      * 插入向量
