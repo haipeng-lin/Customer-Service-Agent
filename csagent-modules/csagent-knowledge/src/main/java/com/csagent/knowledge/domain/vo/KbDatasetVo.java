@@ -1,16 +1,17 @@
 package com.csagent.knowledge.domain.vo;
 
-import com.csagent.knowledge.domain.KbDataset;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
+import com.csagent.common.translation.annotation.Translation;
+import com.csagent.common.translation.constant.TransConstant;
+import com.csagent.knowledge.domain.KbDataset;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -64,5 +65,28 @@ public class KbDatasetVo implements Serializable {
     @ExcelDictFormat(dictType = "sys_normal_disable")
     private String status;
 
+    /**
+     * 文档数量
+     */
+    @ExcelProperty(value = "文档数量")
+    private Integer documentCount;
+
+    /**
+     * 应用数量
+     */
+    @ExcelProperty(value = "应用数量")
+    private Integer applicationCount;
+
+    /**
+     * 创建人
+     */
+    @ExcelProperty(value = "创建人")
+    private Long createBy;
+
+    /**
+     * 创建人-用户名
+     */
+    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
+    private String createByName;
 
 }

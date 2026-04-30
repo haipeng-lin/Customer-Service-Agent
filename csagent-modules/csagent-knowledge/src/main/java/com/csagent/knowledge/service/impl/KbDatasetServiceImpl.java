@@ -67,8 +67,7 @@ public class KbDatasetServiceImpl implements IKbDatasetService {
      */
     @Override
     public List<KbDatasetVo> queryList(KbDatasetBo bo) {
-        LambdaQueryWrapper<KbDataset> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return baseMapper.selectDatasetVoWithCount();
     }
 
     private LambdaQueryWrapper<KbDataset> buildQueryWrapper(KbDatasetBo bo) {

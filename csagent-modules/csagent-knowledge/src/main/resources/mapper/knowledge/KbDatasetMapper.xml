@@ -3,4 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.csagent.knowledge.mapper.KbDatasetMapper">
+
+    <select id="selectDatasetVoWithCount" resultType="com.csagent.knowledge.domain.vo.KbDatasetVo">
+        SELECT d.*,
+               COUNT(DISTINCT doc.id) AS documentCount,
+               COUNT(DISTINCT rel.application_id) AS applicationCount
+        FROM kb_dataset d
+        LEFT JOIN kb_document doc ON doc.dataset_id = d.id AND doc.status = '0'
+        LEFT JOIN app_application_dataset_relation rel ON rel.dataset_id = d.id
+        GROUP BY d.id
+        ORDER BY d.id ASC
+    </select>
+
 </mapper>
