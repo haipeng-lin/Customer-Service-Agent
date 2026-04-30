@@ -47,10 +47,4 @@ public class KbQuestionParagraph extends TenantEntity {
      */
     private Long questionId;
 
-    /**
-     * 修改部门
-     */
-    private Long updateDept;
-
-
 }

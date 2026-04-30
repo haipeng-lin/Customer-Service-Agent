@@ -132,10 +132,4 @@ public class AppApplication extends TenantEntity {
      */
     private String status;
 
-    /**
-     * 修改部门
-     */
-    private Long updateDept;
-
-
 }
