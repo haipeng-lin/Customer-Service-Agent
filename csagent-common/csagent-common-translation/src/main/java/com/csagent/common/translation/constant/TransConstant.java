@@ -42,4 +42,9 @@ public interface TransConstant {
      */
     String DOCUMENT_ID_TO_TITLE = "document_id_to_title";
 
+    /**
+     * 模型id转名称
+     */
+    String MODEL_ID_TO_NAME = "model_id_to_name";
+
 }
