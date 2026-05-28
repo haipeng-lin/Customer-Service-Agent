@@ -3,8 +3,8 @@ package com.csagent.application.service;
 
 import com.csagent.application.domain.AppApplicationChat;
 import com.csagent.application.domain.AppAppraise;
-import com.csagent.application.domain.AppChatMessage;
 import com.csagent.application.domain.AppChatSession;
+import com.csagent.application.domain.vo.AppChatMessageVo;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public interface IChatService {
      * @param sessionId 会话Id
      * @return 结果
      */
-    List<AppChatMessage> listChatLog(Long sessionId);
+    List<AppChatMessageVo> listChatLog(Long sessionId);
 
     /**
      * sse对话

@@ -2,18 +2,27 @@ package com.csagent.application.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.csagent.application.domain.*;
+import com.csagent.application.domain.vo.AppChatMessageVo;
 import com.csagent.application.helper.ApplicationHelper;
 import com.csagent.application.helper.SseEmitterHelper;
 import com.csagent.application.mapper.AppApplicationMapper;
 import com.csagent.application.mapper.AppChatMessageMapper;
 import com.csagent.application.mapper.AppChatSessionMapper;
+import com.csagent.application.service.IAgentService;
 import com.csagent.application.service.IChatService;
 import com.csagent.common.core.constant.SseConstants;
+import com.csagent.common.core.domain.model.LoginUser;
+import com.csagent.common.core.enums.ChatRoleType;
+import com.csagent.common.core.enums.ChatSourceType;
 import com.csagent.common.core.enums.TokenConsumeSource;
 import com.csagent.common.core.enums.UniversalStatus;
 import com.csagent.common.core.exception.ServiceException;
 import com.csagent.common.core.utils.DateUtils;
+import com.csagent.common.satoken.utils.LoginHelper;
 import dev.langchain4j.exception.ModelNotFoundException;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
@@ -46,18 +55,18 @@ public class ChatServiceImpl implements IChatService {
     private SseEmitterHelper sseEmitterHelper;
 
     @Autowired
-    private AgentChat agentChat;
+    private IAgentService agentService;
 
     @Autowired
     private AppApplicationMapper appApplicationMapper;
 
     @Override
     public Long startSession(AppChatSession appChatSession) {
-        appChatSession.setUserId(SecurityUtils.getUserId());
-        appChatSession.setTitle(DateUtils.getDateFormat() + "-" + SecurityUtils.getUsername());
+        appChatSession.setUserId(LoginHelper.getUserId());
+        appChatSession.setTitle(DateUtils.getTime() + "-" + LoginHelper.getUsername());
         appChatSession.setSource(ChatSourceType.WEB.getCode());
         appChatSession.setStatus(UniversalStatus.ENABLE.getCode());
-        int row = appChatSessionMapper.insertAppChatSession(appChatSession);
+        int row = appChatSessionMapper.insert(appChatSession);
         if (row > 0) {
             return appChatSession.getId();
         }
@@ -65,8 +74,10 @@ public class ChatServiceImpl implements IChatService {
     }
 
     @Override
-    public List<AppChatMessage> listChatLog(Long sessionId) {
-        return appChatMessageMapper.selectListBySessionId(sessionId);
+    public List<AppChatMessageVo> listChatLog(Long sessionId) {
+        LambdaQueryWrapper<AppChatMessage> lqw = Wrappers.lambdaQuery();
+        lqw.eq(AppChatMessage::getSessionId, sessionId);
+        return appChatMessageMapper.selectVoList(lqw);
     }
 
     @Override
@@ -74,28 +85,32 @@ public class ChatServiceImpl implements IChatService {
 
         // 保存用户消息
         AppChatMessage userMessage = new AppChatMessage();
-        userMessage.setUserId(SecurityUtils.getUserId());
+        LoginUser loginUser = LoginHelper.getLoginUser();
+        Long userId = loginUser.getUserId();
+        String tenantId = loginUser.getTenantId();
+        Long deptId = loginUser.getDeptId();
+        userMessage.setUserId(userId);
         userMessage.setApplicationId(applicationChat.getApplicationId());
         userMessage.setSessionId(applicationChat.getSessionId());
         userMessage.setRole(ChatRoleType.USER.getCode());
         userMessage.setContent(applicationChat.getContent());
-        appChatMessageMapper.insertAppChatMessage(userMessage);
-
-        Long userId = SecurityUtils.getUserId();
+        appChatMessageMapper.insert(userMessage);
         SseEmitter emitter = new SseEmitter(300000L);
         try {
             // 获取应用信息
-            AppApplication application = appApplicationMapper.selectAppApplicationById(applicationChat.getApplicationId());
+            AppApplication application = appApplicationMapper.selectById(applicationChat.getApplicationId());
             if (application == null) {
                 throw new ServiceException("应用配置错误");
             }
             try {
-                TokenStream tokenStream = agentChat.streamChat(application, applicationChat);
+                TokenStream tokenStream = agentService.streamChat(application, applicationChat);
                 // 异步发送消息
                 sseEmitterHelper.asyncSend2Client(tokenStream, emitter, 0, "", (response, time, sources) -> {
                     // 保存AI消息
                     AppChatMessage agentMessage = new AppChatMessage();
                     agentMessage.setUserId(userId); // 使用预先获取的 userId
+                    agentMessage.setTenantId(tenantId);
+                    agentMessage.setCreateDept(deptId);
                     agentMessage.setApplicationId(applicationChat.getApplicationId());
                     agentMessage.setSessionId(applicationChat.getSessionId());
                     agentMessage.setRole(ChatRoleType.AGENT.getCode());
@@ -108,7 +123,7 @@ public class ChatServiceImpl implements IChatService {
                         agentMessage.setToken(Long.valueOf(response.tokenUsage().totalTokenCount()));
                     }
                     agentMessage.setLatencyMs(time);
-                    appChatMessageMapper.insertAppChatMessage(agentMessage);
+                    appChatMessageMapper.insert(agentMessage);
                     // 2、消耗token
                     applicationHelper.writeTokenLog(application.getModelId(), TokenConsumeSource.CHAT.getCode(), response.tokenUsage());
                     // 返回消息ID
@@ -124,7 +139,7 @@ public class ChatServiceImpl implements IChatService {
                 // 发送友好的错误信息给前端
                 String friendlyMessage = "您选择的AI模型暂时不可用，请联系管理员检查模型配置";
                 emitter.send(SseEmitter.event().name(SseConstants.ERROR)
-                        .data(friendlyMessage));
+                    .data(friendlyMessage));
             } catch (IOException e2) {
                 log.error("发送SSE错误信息失败", e2);
             } finally {
@@ -136,7 +151,7 @@ public class ChatServiceImpl implements IChatService {
                 // 发送通用错误信息给前端
                 String errorMessage = "系统繁忙，请稍后再试";
                 emitter.send(SseEmitter.event().name(SseConstants.ERROR)
-                        .data(errorMessage));
+                    .data(errorMessage));
             } catch (IOException e2) {
                 log.error("发送SSE错误信息失败", e2);
             } finally {
@@ -149,13 +164,15 @@ public class ChatServiceImpl implements IChatService {
 
     @Override
     public void appraise(AppAppraise appAppraise) {
-        AppChatMessage appChatMessage = appChatMessageMapper.selectAppChatMessageById(appAppraise.getMessageId());
+        AppChatMessage appChatMessage = appChatMessageMapper.selectById(appAppraise.getMessageId());
         if (appChatMessage == null) {
             throw new ServiceException("消息不能为空");
         }
-        appChatMessage.setFeedback(String.valueOf(appAppraise.getAppraise()));
-        appChatMessage.setUpdateTime(DateUtils.getNowDate());
-        appChatMessageMapper.updateAppChatMessage(appChatMessage);
+        LambdaUpdateWrapper<AppChatMessage> luw = Wrappers.lambdaUpdate();
+        luw.eq(AppChatMessage::getId, appAppraise.getMessageId());
+        luw.set(AppChatMessage::getFeedback, appAppraise.getFeedback());
+        luw.set(AppChatMessage::getUpdateTime, DateUtils.getNowDate());
+        appChatMessageMapper.update(luw);
     }
 
 }

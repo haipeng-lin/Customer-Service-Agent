@@ -3,8 +3,8 @@ package com.csagent.web.controller.front;
 
 import com.csagent.application.domain.AppApplicationChat;
 import com.csagent.application.domain.AppAppraise;
-import com.csagent.application.domain.AppChatMessage;
 import com.csagent.application.domain.AppChatSession;
+import com.csagent.application.domain.vo.AppChatMessageVo;
 import com.csagent.application.service.IChatService;
 import com.csagent.common.core.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class ChatController {
      * 获取对话日志
      */
     @GetMapping("/listChatLog")
-    public R<List<AppChatMessage>> listChatLog(@RequestParam("sessionId") Long sessionId) {
+    public R<List<AppChatMessageVo>> listChatLog(@RequestParam("sessionId") Long sessionId) {
         return R.ok(chatService.listChatLog(sessionId));
     }
 
