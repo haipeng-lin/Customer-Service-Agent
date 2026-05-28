@@ -155,17 +155,22 @@ public class SseEmitterHelper {
                 // 计算耗时
                 long second = timer.intervalSecond();
 
+                // 先执行回调获取消息ID
+                Long messageId = null;
+                if (callback != null) {
+                    messageId = callback.onComplete(response, second, retiredMapList);
+                }
+
                 // 发送结束信号
                 Map<String, Object> resMap = new HashMap<>();
                 resMap.put("inputTokens", inputTokenCount);
                 resMap.put("outputTokens", outputTokenCount);
                 resMap.put("totalTokens", totalTokenCount);
                 resMap.put("time", second);
-                sendEndSse(emitter, JSONUtil.toJsonStr(resMap), emitterCompleted);
-
-                if (callback != null) {
-                    callback.onComplete(response, second, retiredMapList);
+                if (messageId != null) {
+                    resMap.put("messageId", messageId);
                 }
+                sendEndSse(emitter, JSONUtil.toJsonStr(resMap), emitterCompleted);
 
                 // 关闭sse
                 if (!emitterCompleted.getAndSet(true)) {

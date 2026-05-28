@@ -13,6 +13,6 @@ import java.util.Map;
 @FunctionalInterface
 public interface OnCompleteCallback {
 
-    void onComplete(ChatResponse response, long duration, List<Map<String, Object>> sourceContent);
+    Long onComplete(ChatResponse response, long duration, List<Map<String, Object>> sourceContent);
 
 }
