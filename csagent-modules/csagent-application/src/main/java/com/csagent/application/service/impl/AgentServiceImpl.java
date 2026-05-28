@@ -2,8 +2,12 @@ package com.csagent.application.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.csagent.application.mapper.AppApplicationMapper;
-import com.csagent.application.mapper.AppChatMessageMapper;
+import com.csagent.application.domain.AppApplication;
+import com.csagent.application.domain.AppApplicationChat;
+import com.csagent.application.helper.ApplicationHelper;
+import com.csagent.application.helper.AssistantBuildHelper;
+import com.csagent.application.helper.ChatModelBuildHelper;
+import com.csagent.application.helper.StreamChatModelBuildHelper;
 import com.csagent.application.service.IAgentService;
 import com.csagent.application.task.EmbeddingDocumentTask;
 import com.csagent.application.task.EmbeddingQuestionTask;
@@ -14,12 +18,16 @@ import com.csagent.common.core.exception.ServiceException;
 import com.csagent.common.core.utils.DateUtils;
 import com.csagent.common.langchain4j.handler.file.FileHandleFactory;
 import com.csagent.common.langchain4j.handler.file.FileHandlerInterface;
+import com.csagent.common.langchain4j.service.IAiService;
 import com.csagent.common.satoken.utils.LoginHelper;
 import com.csagent.knowledge.domain.*;
 import com.csagent.knowledge.domain.vo.KbDocumentSplitVo;
 import com.csagent.knowledge.mapper.*;
 import com.csagent.model.domain.MdModel;
 import com.csagent.model.mapper.MdModelMapper;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.service.TokenStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +50,6 @@ import java.util.List;
 @Service
 public class AgentServiceImpl implements IAgentService {
 
-
     @Autowired
     private KbDocumentMapper kbDocumentMapper;
 
@@ -56,13 +63,6 @@ public class AgentServiceImpl implements IAgentService {
     private MdModelMapper mdModelMapper;
 
     @Autowired
-    private AppApplicationMapper appApplicationMapper;
-
-
-    @Autowired
-    private AppChatMessageMapper appChatMessageMapper;
-
-    @Autowired
     private EmbeddingDocumentTask embeddingDocumentTask;
 
     @Autowired
@@ -70,9 +70,24 @@ public class AgentServiceImpl implements IAgentService {
 
     @Autowired
     private EmbeddingQuestionTask embeddingQuestionTask;
+
     @Autowired
     private KbEmbeddingMapper kbEmbeddingMapper;
 
+    @Autowired
+    private MdModelMapper modelMapper;
+
+    @Autowired
+    private AssistantBuildHelper assistantBuildHelper;
+
+    @Autowired
+    private StreamChatModelBuildHelper streamChatModelBuildHelper;
+
+    @Autowired
+    private ChatModelBuildHelper chatModelBuildHelper;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     @Override
     public void embeddingDocument(String documentIds) {
@@ -261,6 +276,41 @@ public class AgentServiceImpl implements IAgentService {
         wrapper.in(KbQuestionParagraph::getQuestionId, questionIds)
             .eq(KbQuestionParagraph::getDatasetId, datasetId);
         return kbQuestionParagraphMapper.selectList(wrapper);
+    }
+
+    /**
+     * 普通模式聊天
+     *
+     * @param application     应用
+     * @param applicationChat 应用对话
+     * @return TokenStream
+     */
+    @Override
+    public TokenStream streamChat(AppApplication application, AppApplicationChat applicationChat) {
+
+        // 获取模型信息
+        MdModel model = modelMapper.selectById(application.getModelId());
+
+        // 查询关联的知识库信息
+        applicationChat.setDatasetList(applicationHelper.getRelationDatasetList(applicationChat.getApplicationId()));
+
+        // step 1 构建模型流式应答对象
+        StreamingChatModel streamingChatModel = streamChatModelBuildHelper.build(model, application);
+        // step 2 构建模型普通对象，用于问题优化下使用
+        ChatModel chatModel = chatModelBuildHelper.build(model, application);
+        // step 3 构建 IAiService
+        IAiService assistant = assistantBuildHelper.build(application, applicationChat, streamingChatModel, chatModel);
+
+        TokenStream tokenStream;
+        if (application.getPrompt().isBlank()) {
+            // 没有提示词
+            tokenStream = assistant.chatInTokenStream(applicationChat.getContent());
+        } else {
+            // 有提示词
+            tokenStream = assistant.chatWithSystem(application.getPrompt(), applicationChat.getContent());
+        }
+
+        return tokenStream;
     }
 
 }

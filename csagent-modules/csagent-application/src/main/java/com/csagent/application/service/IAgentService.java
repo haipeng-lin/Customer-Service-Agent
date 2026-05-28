@@ -1,12 +1,16 @@
 package com.csagent.application.service;
 
+import com.csagent.application.domain.AppApplication;
+import com.csagent.application.domain.AppApplicationChat;
 import com.csagent.common.core.domain.KbDocumentPreview;
 import com.csagent.knowledge.domain.KbDocumentSave;
 import com.csagent.knowledge.domain.KbQuestionGeneration;
 import com.csagent.knowledge.domain.KbQuestionParagraph;
 import com.csagent.knowledge.domain.KbQuestionRelationOperate;
 import com.csagent.knowledge.domain.vo.KbDocumentSplitVo;
+import dev.langchain4j.service.TokenStream;
 
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -67,4 +71,15 @@ public interface IAgentService {
      * @return 结果
      */
     List<KbQuestionParagraph> selectByQuestionIdsAndDatasetId(List<Long> questionIdList, Long datasetId);
+
+    /**
+     * 流式对话
+     *
+     * @param application        应用
+     * @param appApplicationChat 应用对话
+     * @return 结果
+     * @throws UnknownHostException
+     */
+    TokenStream streamChat(AppApplication application, AppApplicationChat appApplicationChat) throws UnknownHostException;
+
 }
