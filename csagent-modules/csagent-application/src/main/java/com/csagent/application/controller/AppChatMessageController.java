@@ -1,26 +1,27 @@
 package com.csagent.application.controller;
 
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
-import com.csagent.common.idempotent.annotation.RepeatSubmit;
-import com.csagent.common.log.annotation.Log;
-import com.csagent.common.web.core.BaseController;
-import com.csagent.common.mybatis.core.page.PageQuery;
+import com.csagent.application.domain.bo.AppChatMessageBo;
+import com.csagent.application.domain.vo.AppChatMessageVo;
+import com.csagent.application.service.IAppChatMessageService;
 import com.csagent.common.core.domain.R;
 import com.csagent.common.core.validate.AddGroup;
 import com.csagent.common.core.validate.EditGroup;
-import com.csagent.common.log.enums.BusinessType;
 import com.csagent.common.excel.utils.ExcelUtil;
-import com.csagent.application.domain.vo.AppChatMessageVo;
-import com.csagent.application.domain.bo.AppChatMessageBo;
-import com.csagent.application.service.IAppChatMessageService;
+import com.csagent.common.idempotent.annotation.RepeatSubmit;
+import com.csagent.common.log.annotation.Log;
+import com.csagent.common.log.enums.BusinessType;
+import com.csagent.common.mybatis.core.page.PageQuery;
 import com.csagent.common.mybatis.core.page.TableDataInfo;
+import com.csagent.common.web.core.BaseController;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 对话消息
@@ -35,6 +36,15 @@ import com.csagent.common.mybatis.core.page.TableDataInfo;
 public class AppChatMessageController extends BaseController {
 
     private final IAppChatMessageService appChatMessageService;
+
+    /**
+     * 查询全部对话消息
+     */
+    @SaCheckPermission("application:chatMessage:list")
+    @GetMapping("/listAll")
+    public R<List<AppChatMessageVo>> listAll(AppChatMessageBo bo) {
+        return R.ok(appChatMessageService.queryList(bo));
+    }
 
     /**
      * 查询对话消息列表
