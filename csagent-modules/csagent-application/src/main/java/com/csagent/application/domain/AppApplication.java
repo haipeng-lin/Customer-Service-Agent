@@ -2,6 +2,8 @@ package com.csagent.application.domain;
 
 import com.csagent.common.tenant.core.TenantEntity;
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,6 +26,7 @@ public class AppApplication extends TenantEntity {
     /**
      * Id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id")
     private Long id;
 
@@ -45,7 +48,7 @@ public class AppApplication extends TenantEntity {
     /**
      * 模型Id
      */
-    private String modelId;
+    private Long modelId;
 
     /**
      * 模型名称
@@ -80,7 +83,7 @@ public class AppApplication extends TenantEntity {
     /**
      * 相似度
      */
-    private Long similarity;
+    private Double similarity;
 
     /**
      * 召回数量

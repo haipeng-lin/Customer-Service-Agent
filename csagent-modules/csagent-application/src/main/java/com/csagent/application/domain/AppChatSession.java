@@ -1,11 +1,16 @@
 package com.csagent.application.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.csagent.common.tenant.core.TenantEntity;
-import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
+import java.util.Date;
 
 /**
  * 对话会话对象 app_chat_session
@@ -24,6 +29,7 @@ public class AppChatSession extends TenantEntity {
     /**
      * Id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id")
     private Long id;
 
@@ -52,5 +58,16 @@ public class AppChatSession extends TenantEntity {
      */
     private String status;
 
+    /**
+     * 更新者
+     */
+    @TableField(exist = false)
+    private Long updateBy;
+
+    /**
+     * 更新时间
+     */
+    @TableField(exist = false)
+    private Date updateTime;
 
 }

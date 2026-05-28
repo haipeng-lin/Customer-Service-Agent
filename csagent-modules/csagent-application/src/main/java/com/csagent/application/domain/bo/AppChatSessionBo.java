@@ -1,12 +1,12 @@
 package com.csagent.application.domain.bo;
 
-import com.csagent.common.core.validate.EditGroup;
 import com.csagent.application.domain.AppChatSession;
+import com.csagent.common.core.validate.EditGroup;
 import com.csagent.common.mybatis.core.domain.BaseEntity;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import jakarta.validation.constraints.*;
 
 /**
  * 对话会话业务对象 app_chat_session

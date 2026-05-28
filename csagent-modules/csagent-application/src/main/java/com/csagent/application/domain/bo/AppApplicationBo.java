@@ -78,12 +78,12 @@ public class AppApplicationBo extends BaseEntity {
     /**
      * 相似度
      */
-    private Long similarity;
+    private Double similarity;
 
     /**
      * 召回数量
      */
-    private Long topRank;
+    private Integer topRank;
 
     /**
      * 重排索引模型
@@ -93,17 +93,17 @@ public class AppApplicationBo extends BaseEntity {
     /**
      * 记忆条数
      */
-    private Long memoryNum;
+    private Integer memoryNum;
 
     /**
      * 回复上限
      */
-    private Long maxReplyToken;
+    private Integer maxReplyToken;
 
     /**
      * 温度
      */
-    private Long temperature;
+    private Double temperature;
 
     /**
      * 是否显示引用

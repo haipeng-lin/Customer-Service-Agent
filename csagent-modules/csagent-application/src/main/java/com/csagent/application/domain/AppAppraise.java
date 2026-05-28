@@ -24,5 +24,5 @@ public class AppAppraise implements Serializable {
     /**
      * 评价类型（1-赞 2-踩）
      */
-    private Integer appraise;
+    private String feedback;
 }

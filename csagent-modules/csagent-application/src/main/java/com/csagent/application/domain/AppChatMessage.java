@@ -2,6 +2,8 @@ package com.csagent.application.domain;
 
 import com.csagent.common.tenant.core.TenantEntity;
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,6 +26,7 @@ public class AppChatMessage extends TenantEntity {
     /**
      * Id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId(value = "id")
     private Long id;
 
@@ -66,6 +69,24 @@ public class AppChatMessage extends TenantEntity {
      * 评价（0-未评价 1-赞 2-踩）
      */
     private String feedback;
+
+    /**
+     * 引用内容
+     */
+    @TableField(exist = false)
+    private String sourceContent;
+
+    /**
+     * 更新者
+     */
+    @TableField(exist = false)
+    private Long createBy;
+
+    /**
+     * 更新者
+     */
+    @TableField(exist = false)
+    private Long updateBy;
 
 
 }

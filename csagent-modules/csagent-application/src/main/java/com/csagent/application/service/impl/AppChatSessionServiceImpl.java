@@ -7,6 +7,7 @@ import com.csagent.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.csagent.common.satoken.utils.LoginHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,7 @@ public class AppChatSessionServiceImpl implements IAppChatSessionService {
     @Override
     public List<AppChatSessionVo> queryList(AppChatSessionBo bo) {
         LambdaQueryWrapper<AppChatSession> lqw = buildQueryWrapper(bo);
+        lqw.eq(AppChatSession::getUserId, LoginHelper.getUserId());
         return baseMapper.selectVoList(lqw);
     }
 

@@ -1,8 +1,8 @@
 package com.csagent.application.domain.vo;
 
-import com.csagent.application.domain.AppChatMessage;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
+import com.csagent.application.domain.AppChatMessage;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -10,7 +10,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -83,6 +82,12 @@ public class AppChatMessageVo implements Serializable {
     @ExcelProperty(value = "评价", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "app_feedback_type")
     private String feedback;
+
+    /**
+     * 创建时间
+     */
+    @ExcelProperty(value = "创建时间")
+    private String createTime;
 
 
 }

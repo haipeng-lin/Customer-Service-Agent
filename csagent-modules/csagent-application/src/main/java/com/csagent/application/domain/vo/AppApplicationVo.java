@@ -1,8 +1,8 @@
 package com.csagent.application.domain.vo;
 
-import com.csagent.application.domain.AppApplication;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
+import com.csagent.application.domain.AppApplication;
 import com.csagent.common.excel.annotation.ExcelDictFormat;
 import com.csagent.common.excel.convert.ExcelDictConvert;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -10,7 +10,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -99,13 +98,13 @@ public class AppApplicationVo implements Serializable {
      * 相似度
      */
     @ExcelProperty(value = "相似度")
-    private Long similarity;
+    private Double similarity;
 
     /**
      * 召回数量
      */
     @ExcelProperty(value = "召回数量")
-    private Long topRank;
+    private Integer topRank;
 
     /**
      * 重排索引模型
@@ -117,19 +116,19 @@ public class AppApplicationVo implements Serializable {
      * 记忆条数
      */
     @ExcelProperty(value = "记忆条数")
-    private Long memoryNum;
+    private Integer memoryNum;
 
     /**
      * 回复上限
      */
     @ExcelProperty(value = "回复上限")
-    private Long maxReplyToken;
+    private Integer maxReplyToken;
 
     /**
      * 温度
      */
     @ExcelProperty(value = "温度")
-    private Long temperature;
+    private Double temperature;
 
     /**
      * 是否显示引用

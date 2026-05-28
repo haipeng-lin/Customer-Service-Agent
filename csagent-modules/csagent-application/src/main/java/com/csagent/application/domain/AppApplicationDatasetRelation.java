@@ -1,5 +1,6 @@
 package com.csagent.application.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.csagent.common.tenant.core.TenantEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,8 +31,16 @@ public class AppApplicationDatasetRelation extends TenantEntity {
      */
     private Long datasetId;
 
-    public AppApplicationDatasetRelation(Long applicationId, Long datasetId, Date createTime) {
-        this.applicationId = applicationId;
-        this.datasetId = datasetId;
-    }
+    /**
+     * 更新者
+     */
+    @TableField(exist = false)
+    private Long updateBy;
+
+    /**
+     * 更新时间
+     */
+    @TableField(exist = false)
+    private Date updateTime;
+
 }
