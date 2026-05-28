@@ -71,9 +71,8 @@ public class AppChatMessage extends TenantEntity {
     private String feedback;
 
     /**
-     * 引用内容
+     * 来源内容
      */
-    @TableField(exist = false)
     private String sourceContent;
 
     /**

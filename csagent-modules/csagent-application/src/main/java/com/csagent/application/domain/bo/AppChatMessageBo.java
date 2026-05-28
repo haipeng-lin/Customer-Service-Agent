@@ -70,6 +70,11 @@ public class AppChatMessageBo extends BaseEntity {
     private String feedback;
 
     /**
+     * 来源内容
+     */
+    private String sourceContent;
+
+    /**
      * 创建部门
      */
     @TableField(fill = FieldFill.INSERT)

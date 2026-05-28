@@ -168,7 +168,7 @@ public class SseEmitterHelper {
                 resMap.put("totalTokens", totalTokenCount);
                 resMap.put("time", second);
                 if (messageId != null) {
-                    resMap.put("messageId", messageId);
+                    resMap.put("messageId", String.valueOf(messageId));
                 }
                 sendEndSse(emitter, JSONUtil.toJsonStr(resMap), emitterCompleted);
 

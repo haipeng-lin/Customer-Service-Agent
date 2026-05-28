@@ -84,6 +84,12 @@ public class AppChatMessageVo implements Serializable {
     private String feedback;
 
     /**
+     * 来源内容
+     */
+    @ExcelProperty(value = "来源内容")
+    private String sourceContent;
+
+    /**
      * 创建时间
      */
     @ExcelProperty(value = "创建时间")
